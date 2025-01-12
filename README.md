@@ -1,7 +1,7 @@
 ## Overview
 
 <p align="center">
-  <img src=".externals/imgs/logo.png" alt="Red-Shark Logo" style="max-width: 100%; height: auto;">
+  <img src=".externals/imgs/logo.png" alt="Red-Shark Logo" width="200">
 </p>
 
 Welcome to **Red-Shark**, the open-source social media platform that dares to be different! Here, user safety and privacy aren’t just buzzwords—they’re our core mission. Tired of social networks treating you like a product? Red-Shark is your safe harbor. At our social network, your privacy isn't a feature—it's a promisse. Say goodbye to hidden agendas and take control of your digital experience right now. Plus, it’s completely free and driven by community creativity. Think of it as the social media mashup of your dreams, where you decide what happens next.
