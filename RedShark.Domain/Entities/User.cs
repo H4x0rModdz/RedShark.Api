@@ -1,5 +1,6 @@
 ﻿using RedShark.Domain.Exceptions;
 using RedShark.Domain.ValueObjects;
+using System.Text.RegularExpressions;
 
 namespace RedShark.Domain.Entities
 {
@@ -53,7 +54,19 @@ namespace RedShark.Domain.Entities
 
         private static void ValidateName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new UserInvalidNameException();
+            ValidateNullOrWhitespace(name);
+            ValidateFormat(name);
+        }
+
+        private static void ValidateNullOrWhitespace(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw UserInvalidNameException.NullOrWhitespace();
+        }
+
+        private static void ValidateFormat(string name)
+        {
+            string pattern = @"^[a-zA-Zà-úÀ-Ú\s]+$";
+            if (!Regex.IsMatch(name, pattern)) throw UserInvalidNameException.InvalidFormat();
         }
 
         private static void ValidatePassword(string password)
