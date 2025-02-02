@@ -265,7 +265,11 @@ __pycache__/
 *.pyc
 
 # Others
-/RedShark.Api/appsettings.Development.json
+/CleanSharpArchitecture/appsettings.Development.json
+/CleanSharpArchitecture/appsettings.json
+/CleanSharpArchitecture.AppHost/appsettings.Development.json
+/CleanSharpArchitecture.AppHost/appsettings.json
+
 
 # Cake - Uncomment if you are using it
 # tools/
