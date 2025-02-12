@@ -1,10 +1,10 @@
 ﻿using CleanSharpArchitecture.Application.DTOs.Likes.Request;
 using CleanSharpArchitecture.Application.DTOs.Likes.Response;
 using CleanSharpArchitecture.Application.DTOs.Likes;
-using CleanSharpArchitecture.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CleanSharpArchitecture.Domain.Enums;
+using CleanSharpArchitecture.Application.Services.Interfaces;
 
 namespace CleanSharpArchitecture.Controllers
 {
@@ -34,23 +34,23 @@ namespace CleanSharpArchitecture.Controllers
         /// <summary>
         /// Exclui um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like a ser excluído.</param>
+        /// <param name="id">ID do like a ser excluído.</param>
         /// <returns>Retorna o resultado da operação de exclusão.</returns>
-        [HttpDelete("{likeId}")]
-        public async Task<LikeResultDto> DeleteLike(Guid likeId)
+        [HttpDelete("{id}")]
+        public async Task<LikeResultDto> DeleteLike(Guid id)
         {
-            return await _likeService.DeleteLike(likeId);
+            return await _likeService.DeleteLike(id);
         }
 
         /// <summary>
         /// Recupera um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like.</param>
-        /// <returns>Retorna os dados do like ou null se não encontrado.</returns>
-        [HttpGet("{likeId}")]
-        public async Task<LikeDto?> GetLikeById(Guid likeId)
+        /// <param name="id">ID do like.</param>
+        /// <returns>id os dados do like ou null se não encontrado.</returns>
+        [HttpGet("{id}")]
+        public async Task<LikeDto?> GetLikeById(Guid id)
         {
-            return await _likeService.GetLikeById(likeId);
+            return await _likeService.GetLikeById(id);
         }
 
         /// <summary>
