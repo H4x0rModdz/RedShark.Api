@@ -14,6 +14,7 @@ using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Entities.Chats;
 using CleanSharpArchitecture.Domain.Entities.Posts;
 using CleanSharpArchitecture.Application.DTOs.Posts.PostImages;
+using CleanSharpArchitecture.Application.DTOs.Posts.Response;
 
 namespace CleanSharpArchitecture.Application.Mappings
 {
@@ -40,23 +41,23 @@ namespace CleanSharpArchitecture.Application.Mappings
             #endregion Chat
 
             #region Post
-            
             CreateMap<Post, PostDto>()
                 .ForMember(dest => dest.Images,
-                           opt => opt.MapFrom(src => src.Images.Select(i => i.ImageUrl)))
+                    opt => opt.MapFrom(src => src.Images.Select(i => new PostImageDto { Id = i.Id, ImageUrl = i.ImageUrl })))
                 .ForMember(dest => dest.CommentsCount,
-                           opt => opt.MapFrom(src => src.Comments.Count))
+                    opt => opt.MapFrom(src => src.Comments.Count))
                 .ForMember(dest => dest.LikesCount,
-                           opt => opt.MapFrom(src => src.Likes.Count));
+                    opt => opt.MapFrom(src => src.Likes.Count));
 
-            CreateMap<PostImage, PostImageDto>()
-                .ForMember(dest => dest.ImageUrl,
-                           opt => opt.MapFrom(src => src.ImageUrl));
-            
+            CreateMap<PostImage, PostImageDto>();
+
+            CreateMap<Post, GetPostDto>()
+                .ForMember(dest => dest.ImageUrls,
+                    opt => opt.MapFrom(src => src.Images.Select(i => i.ImageUrl)));
             #endregion Post
 
             #region Badge
-            
+
             CreateMap<Badge, BadgeDto>();
 
             CreateMap<UserBadge, UserBadgeDto>()
@@ -66,23 +67,24 @@ namespace CleanSharpArchitecture.Application.Mappings
                     opt => opt.MapFrom(src => src.Badge.Description))
                 .ForMember(dest => dest.BadgeIconUrl,
                     opt => opt.MapFrom(src => src.Badge.IconUrl));
-            
+
             #endregion Badge
 
             #region User
-            
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Posts,
-                    opt => opt.MapFrom(src => src.Posts));
+                    opt => opt.MapFrom(src => src.Posts))
+                .ForMember(dest => dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName));
 
             CreateMap<UpdateUserDto, User>()
                 .ForMember(dest => dest.Id,
                     opt => opt.Ignore());
-            
+
             #endregion User
 
             #region Comment
-            
+
             CreateMap<Comment, CommentDto>()
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(src => src.User.Name));
@@ -111,10 +113,6 @@ namespace CleanSharpArchitecture.Application.Mappings
             CreateMap<Notification, NotificationDto>();
             
             #endregion Notification
-
-
-
-
         }
     }
 }
