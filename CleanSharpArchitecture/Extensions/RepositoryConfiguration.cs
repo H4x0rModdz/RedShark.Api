@@ -14,6 +14,9 @@ namespace CleanSharpArchitecture.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
+            services.AddScoped<IFeedRepository, FeedRepository>();
+            services.AddScoped<IFollowerRepository, FollowerRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
             return services;
         }

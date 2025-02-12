@@ -23,7 +23,7 @@ public static class JwtConfiguration
         })
         .AddJwtBearer(options =>
         {
-            options.RequireHttpsMetadata = false; // Defina como true em produção
+            options.RequireHttpsMetadata = false; // Set to true in production
             options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -33,7 +33,7 @@ public static class JwtConfiguration
                 ValidateAudience = true,
                 ValidIssuer = jwtSettings.Issuer,
                 ValidAudience = jwtSettings.Audience,
-                ClockSkew = TimeSpan.Zero // sem tolerância para expiração
+                ClockSkew = TimeSpan.Zero
             };
         });
 
@@ -41,7 +41,6 @@ public static class JwtConfiguration
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sua API", Version = "v1" });
 
-            // Definindo o esquema de segurança do JWT
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description = "Insira o token JWT desta forma: Bearer {seu token}",
@@ -51,7 +50,6 @@ public static class JwtConfiguration
                 Scheme = "Bearer"
             });
 
-            // Requisitando a utilização do esquema de segurança em todas as operações
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
