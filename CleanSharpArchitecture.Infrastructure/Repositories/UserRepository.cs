@@ -36,6 +36,10 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             if (status.HasValue)
                 query = query.Where(u => u.Status == status.Value);
 
+            if (include?.Contains("posts") == true)
+                query = query.Include(u => u.Posts)
+                             .ThenInclude(p => p.Images);
+
             query = ApplyIncludes(query, include);
 
             query = query.Skip((pageNumber - 1) * pageSize)

@@ -4,6 +4,7 @@
     using global::CleanSharpArchitecture.Domain.Entities.Posts;
     using global::CleanSharpArchitecture.Infrastructure.Data;
     using Microsoft.EntityFrameworkCore;
+    using System.Globalization;
 
     namespace CleanSharpArchitecture.Infrastructure.Data.Repositories
     {
@@ -75,6 +76,29 @@
             {
                 _context.PostImages.RemoveRange(images);
                 await _context.SaveChangesAsync();
+            }
+
+            public async Task<IEnumerable<Post>> GetPostsForFeed(IEnumerable<Guid> followedUserIds, string? cursor, int pageSize)
+            {
+                // Inicia a query sem filtrar por UserId
+                var query = _context.Posts
+                    .Include(p => p.Images)
+                    .AsQueryable();
+
+                // Se um cursor for fornecido, filtra os posts com CreatedAt anterior ao cursor.
+                if (!string.IsNullOrEmpty(cursor))
+                {
+                    DateTime cursorDate = DateTime.Parse(cursor, null, DateTimeStyles.RoundtripKind);
+                    query = query.Where(p => p.CreatedAt < cursorDate);
+                }
+
+                // Ordena: primeiro, prioriza os posts cujo UserId esteja na lista de seguidos,
+                // atribuindo 1 se o post for de um seguido e 0 caso contrário; depois ordena por data de criação.
+                query = query.OrderByDescending(p => followedUserIds.Contains(p.UserId) ? 1 : 0)
+                             .ThenByDescending(p => p.CreatedAt)
+                             .Take(pageSize);
+
+                return await query.ToListAsync();
             }
         }
     }
