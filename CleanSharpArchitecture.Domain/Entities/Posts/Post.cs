@@ -1,4 +1,6 @@
-﻿namespace CleanSharpArchitecture.Domain.Entities.Posts
+﻿using System.Text.Json.Serialization;
+
+namespace CleanSharpArchitecture.Domain.Entities.Posts
 {
     public class Post : BaseEntity
     {
