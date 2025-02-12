@@ -17,16 +17,16 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
         /// <summary>
         /// Exclui um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like a ser removido.</param>
+        /// <param name="id">ID do like a ser removido.</param>
         /// <returns>Retorna o resultado da operação.</returns>
-        Task<LikeResultDto> DeleteLike(Guid likeId);
+        Task<LikeResultDto> DeleteLike(Guid id);
 
         /// <summary>
         /// Recupera um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like.</param>
+        /// <param name="id">ID do like.</param>
         /// <returns>Retorna o DTO do like ou null se não encontrado.</returns>
-        Task<LikeDto?> GetLikeById(Guid likeId);
+        Task<LikeDto?> GetLikeById(Guid id);
 
         /// <summary>
         /// Recupera todos os likes, opcionalmente filtrando por PostId.

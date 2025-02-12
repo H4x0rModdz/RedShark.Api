@@ -1,7 +1,7 @@
-﻿using CleanSharpArchitecture.Application.DTOs.Auth.Request;
+﻿using CleanSharpArchitecture.Application.Services.Interfaces;
+using CleanSharpArchitecture.Application.DTOs.Auth.Request;
 using CleanSharpArchitecture.Application.DTOs.Auth.Response;
 using CleanSharpArchitecture.Application.Repositories.Interfaces;
-using CleanSharpArchitecture.Application.Services.Interfaces;
 using CleanSharpArchitecture.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Serilog;
@@ -15,9 +15,10 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         private readonly ITokenService _tokenService;
         private readonly BlobService _blobService;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService, BlobService blobService)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, BlobService blobService, IEmailService emailService)
         {
             _userRepository = userRepository;
+            _emailService = emailService;
             _tokenService = tokenService;
             _blobService = blobService;
         }
@@ -53,13 +54,24 @@ namespace CleanSharpArchitecture.Infrastructure.Services
 
         public async Task<LoginResultDto> Login(LoginDto loginDto)
         {
-            var user = await _userRepository.SelectByEmail(loginDto.Email);
-            if (user is null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
+            var user = await _userRepository.SelectByEmail(loginDto.Email) ?? throw new Exception("User not found.");
+
+            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
+            {
+                user.RegisterFailedAttempt();
+                await _userRepository.Update(user);
+
+                Log.Warning("User {Name} failed to login. Failed attempts: {FailedLoginAttempts}", user.Name, user.FailedLoginAttempts);
+
                 throw new Exception("Invalid email or password.");
+            }
+
+            user.ResetFailedAttempts();
+            await _userRepository.Update(user);
 
             var token = _tokenService.GenerateToken(user);
 
-            Log.Information($"User {user.Name} logged in successfully.");
+            Log.Information("User {Name} logged in successfully.", user.Name);
 
             return new LoginResultDto
             {
@@ -84,7 +96,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
             return new SendCodeResultDto
             {
                 Success = true,
-                Code = "",
+                Code = user.RecoveryCode,
                 Errors = new List<string>()
             };
         }
@@ -101,7 +113,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
                 };
             }
 
-            user.Password = recoveryDto.NewPassword;
+            user.Password = BCrypt.Net.BCrypt.HashPassword(recoveryDto.NewPassword);
             user.RecoveryCode = null;
             user.RecoveryCodeExpiration = null;
             await _userRepository.Update(user);
@@ -148,6 +160,10 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         {
             if (string.IsNullOrEmpty(email) || !email.Contains("@"))
                 throw new Exception("Invalid email format.");
+
+            var existentUser = _userRepository.SelectByEmail(email).Result;
+            if (existentUser != null)
+                throw new Exception("The email is already in use.");
         }
 
         private void ValidatePassword(string password)

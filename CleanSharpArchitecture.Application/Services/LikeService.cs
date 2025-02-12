@@ -30,11 +30,7 @@ namespace CleanSharpArchitecture.Application.Services
         {
             try
             {
-                var like = new Like
-                {
-                    UserId = createLikeDto.UserId,
-                    PostId = createLikeDto.PostId
-                };
+                var like = _mapper.Map<Like>(createLikeDto);
 
                 var createdLike = await _likeRepository.Create(like);
 
@@ -61,14 +57,14 @@ namespace CleanSharpArchitecture.Application.Services
         /// <summary>
         /// Exclui um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like a ser removido.</param>
+        /// <param name="id">ID do like a ser removido.</param>
         /// <returns>Retorna um objeto <see cref="LikeResultDto"/> com o resultado da operação.</returns>
-        public async Task<LikeResultDto> DeleteLike(Guid likeId)
+        public async Task<LikeResultDto> DeleteLike(Guid id)
         {
             try
             {
-                await _likeRepository.Delete(likeId);
-                Log.Information($"Like {likeId} deleted successfully.");
+                await _likeRepository.Delete(id);
+                Log.Information($"Like {id} deleted successfully.");
                 return new LikeResultDto
                 {
                     Success = true,
@@ -89,12 +85,12 @@ namespace CleanSharpArchitecture.Application.Services
         /// <summary>
         /// Recupera um like pelo seu ID.
         /// </summary>
-        /// <param name="likeId">ID do like.</param>
+        /// <param name="id">ID do like.</param>
         /// <returns>Retorna um <see cref="LikeDto"/> ou null se não encontrado.</returns>
-        public async Task<LikeDto?> GetLikeById(Guid likeId)
+        public async Task<LikeDto?> GetLikeById(Guid id)
         {
-            var like = await _likeRepository.GetById(likeId);
-            return like == null ? null : _mapper.Map<LikeDto>(like);
+            var like = await _likeRepository.GetById(id);
+            return like == null ? null : _mapper.Map<LikeDto>(id);
         }
 
         /// <summary>
