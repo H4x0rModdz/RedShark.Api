@@ -76,3 +76,4 @@ appsettings.Test.json
 appsettings.Staging.json
 appsettings.Production.json
 secrets.json
+CleanSharpArchitecture.Infrastructure/Migrations/*
