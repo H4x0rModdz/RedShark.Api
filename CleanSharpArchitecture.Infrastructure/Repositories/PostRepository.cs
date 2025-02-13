@@ -83,6 +83,11 @@
                 // Inicia a query sem filtrar por UserId
                 var query = _context.Posts
                     .Include(p => p.Images)
+                    .Include(p => p.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Replies)
                     .AsQueryable();
 
                 // Se um cursor for fornecido, filtra os posts com CreatedAt anterior ao cursor.
