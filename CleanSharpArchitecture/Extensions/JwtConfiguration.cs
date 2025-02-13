@@ -39,7 +39,7 @@ public static class JwtConfiguration
 
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sua API", Version = "v1" });
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Red-Shark API", Version = "v1" });
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
