@@ -25,7 +25,7 @@ namespace CleanSharpArchitecture.Controllers
         [HttpGet]
         public async Task<FeedResponseDto> GetFeed([FromQuery] FeedRequestDto feedRequestDto)
         {
-            if (feedRequestDto.UserId == Guid.Empty || feedRequestDto.UserId is null) // TODO: Id is null -> Value cannot be null. (Parameter 'input')
+            if (feedRequestDto.UserId == Guid.Empty || feedRequestDto.UserId is null) // TODO: Fix Id is null -> Value cannot be null. (Parameter 'input')
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
                 feedRequestDto.UserId = Guid.Parse(userId);
