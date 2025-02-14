@@ -59,7 +59,7 @@ namespace CleanSharpArchitecture.Application.Services
         /// </summary>
         /// <param name="id">ID do like a ser removido.</param>
         /// <returns>Retorna um objeto <see cref="LikeResultDto"/> com o resultado da operação.</returns>
-        public async Task<LikeResultDto> DeleteLike(Guid id)
+        public async Task<LikeResultDto> DeleteLike(long id)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace CleanSharpArchitecture.Application.Services
         /// </summary>
         /// <param name="id">ID do like.</param>
         /// <returns>Retorna um <see cref="LikeDto"/> ou null se não encontrado.</returns>
-        public async Task<LikeDto?> GetLikeById(Guid id)
+        public async Task<LikeDto?> GetLikeById(long id)
         {
             var like = await _likeRepository.GetById(id);
             return like == null ? null : _mapper.Map<LikeDto>(id);
@@ -105,7 +105,7 @@ namespace CleanSharpArchitecture.Application.Services
         /// <param name="pageNumber">Número da página (padrão 1).</param>
         /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
         /// <returns>Retorna uma coleção de <see cref="LikeDto"/>.</returns>
-        public async Task<IEnumerable<LikeDto>> GetAllLikes(Guid? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<LikeDto>> GetAllLikes(long? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
         {
             var likes = await _likeRepository.GetAll(postId, status, pageNumber, pageSize);
             return _mapper.Map<IEnumerable<LikeDto>>(likes);

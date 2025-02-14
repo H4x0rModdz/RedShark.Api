@@ -102,7 +102,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         /// </summary>
         /// <param name="postId">ID do post a ser excluído.</param>
         /// <returns>Retorna um objeto <see cref="PostResultDto"/> com o resultado da operação.</returns>
-        public async Task<PostResultDto> DeletePost(Guid postId)
+        public async Task<PostResultDto> DeletePost(long postId)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         /// </summary>
         /// <param name="postId">ID do post a ser recuperado.</param>
         /// <returns>Retorna um <see cref="GetPostDto"/> ou null se o post não for encontrado.</returns>
-        public async Task<GetPostDto?> GetPostById(Guid postId)
+        public async Task<GetPostDto?> GetPostById(long postId)
         {
             var post = await _postRepository.GetById(postId);
             return post is null ? null : _mapper.Map<GetPostDto>(post);
@@ -191,9 +191,9 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         /// </summary>
         /// <param name="post">O post a ser atualizado.</param>
         /// <param name="imagesToKeep">Coleção de IDs das imagens que devem ser mantidas.</param>
-        private async Task RemoveImagesNotInKeepList(Post post, IEnumerable<Guid>? imagesToKeep)
+        private async Task RemoveImagesNotInKeepList(Post post, IEnumerable<long>? imagesToKeep)
         {
-            var keepIds = imagesToKeep ?? new List<Guid>();
+            var keepIds = imagesToKeep ?? new List<long>();
             var imagesToRemove = post.Images.Where(img => !keepIds.Contains(img.Id)).ToList();
 
             foreach (var image in imagesToRemove)

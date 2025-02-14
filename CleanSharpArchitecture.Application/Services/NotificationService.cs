@@ -70,7 +70,7 @@ namespace CleanSharpArchitecture.Application.Services
             return _mapper.Map<IEnumerable<NotificationDto>>(notifications);
         }
 
-        public async Task<NotificationDto> GetNotificationById(Guid id)
+        public async Task<NotificationDto> GetNotificationById(long id)
         {
             var notification = await _repository.GetNotificationByIdAsync(id);
             return notification != null ? _mapper.Map<NotificationDto>(notification) : null;

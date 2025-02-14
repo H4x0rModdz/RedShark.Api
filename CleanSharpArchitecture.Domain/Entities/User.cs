@@ -1,5 +1,6 @@
 ﻿using CleanSharpArchitecture.Domain.Entities.Chats;
 using CleanSharpArchitecture.Domain.Entities.Posts;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CleanSharpArchitecture.Domain.Entities
 {
@@ -23,7 +24,13 @@ namespace CleanSharpArchitecture.Domain.Entities
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();
         public ICollection<UserBadge> Badges { get; set; } = new List<UserBadge>();
+
+        [InverseProperty(nameof(Follower.User))]
         public ICollection<Follower> Followers { get; set; } = new List<Follower>();
+
+        [InverseProperty(nameof(Follower.FollowerUser))]
+        public ICollection<Follower> Following { get; set; } = new List<Follower>();
+
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<UserChat> Chats { get; set; } = new List<UserChat>();
 
@@ -61,6 +68,9 @@ namespace CleanSharpArchitecture.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(ProfileImageUrl))
                 ProfileImageUrl = "https://github.com/shadcn.png";
+
+            if (string.IsNullOrWhiteSpace(Biography))
+                Biography = "This user has not provided a biography yet.";
         }
     }
 }

@@ -5,6 +5,6 @@
         /// <summary>
         /// Retorna a lista de IDs dos usuários que o usuário (follower) está seguindo.
         /// </summary>
-        Task<IEnumerable<Guid>> GetFollowedUserIds(Guid followerId);
+        Task<IEnumerable<long>> GetFollowedUserIds(long followerId);
     }
 }

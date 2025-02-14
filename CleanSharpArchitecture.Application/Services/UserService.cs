@@ -35,7 +35,7 @@ namespace CleanSharpArchitecture.Application.Services
             return _mapper.Map<IEnumerable<UserDto>>(users);
         }
 
-        public async Task<UserDto?> GetUserById(Guid id)
+        public async Task<UserDto?> GetUserById(long id)
         {
             var user = await FindUser(id);
             return _mapper.Map<UserDto>(user);
@@ -67,7 +67,7 @@ namespace CleanSharpArchitecture.Application.Services
             }
         }
 
-        public async Task<DeleteUserResultDto> DeleteUser(Guid id)
+        public async Task<DeleteUserResultDto> DeleteUser(long id)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace CleanSharpArchitecture.Application.Services
             }
         }
 
-        private async Task<User> FindUser(Guid id)
+        private async Task<User> FindUser(long id)
         {
             var user = await _userRepository.SelectById(id);
             if (user is null)

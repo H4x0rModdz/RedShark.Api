@@ -8,7 +8,7 @@
         /// <summary>
         /// Opcional: ID do usuário para personalizar o feed. Caso não informado, pode ser extraído dos Claims.
         /// </summary>
-        public Guid? UserId { get; set; }
+        public long? UserId { get; set; }
 
         /// <summary>
         /// Cursor para paginação (pode ser um token, ou usado para indicar a posição atual).

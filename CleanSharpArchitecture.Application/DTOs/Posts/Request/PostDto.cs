@@ -5,13 +5,13 @@ namespace CleanSharpArchitecture.Application.DTOs.Posts.Request
 {
     public class PostDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
         // Informações do usuário que criou o post
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public string Name { get; set; }
         public string UserName { get; set; }
         public string UserImage { get; set; }

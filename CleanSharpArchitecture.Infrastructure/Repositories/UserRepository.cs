@@ -79,7 +79,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
         /// </summary>
         /// <param name="id">O ID do usuário a ser buscado.</param>
         /// <returns>Uma tarefa que representa a operação assíncrona, contendo o usuário encontrado ou null.</returns>
-        public async Task<User> SelectById(Guid id)
+        public async Task<User> SelectById(long id)
         {
             return await _context.Users.FindAsync(id);
         }
@@ -100,7 +100,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
         /// </summary>
         /// <param name="id">O ID do usuário a ser removido.</param>
         /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-        public async Task Delete(Guid id)
+        public async Task Delete(long id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user != null)

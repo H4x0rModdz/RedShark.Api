@@ -2,9 +2,9 @@
 {
     public class UserChat : BaseEntity
     {
-        public Guid ChatId { get; set; }
+        public long ChatId { get; set; }
         public Chat Chat { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public User User { get; set; }
     }
 }

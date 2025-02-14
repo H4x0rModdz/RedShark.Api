@@ -37,7 +37,7 @@ namespace CleanSharpArchitecture.Controllers
         /// <param name="id">ID do like a ser excluído.</param>
         /// <returns>Retorna o resultado da operação de exclusão.</returns>
         [HttpDelete("{id}")]
-        public async Task<LikeResultDto> DeleteLike(Guid id)
+        public async Task<LikeResultDto> DeleteLike(long id)
         {
             return await _likeService.DeleteLike(id);
         }
@@ -48,7 +48,7 @@ namespace CleanSharpArchitecture.Controllers
         /// <param name="id">ID do like.</param>
         /// <returns>id os dados do like ou null se não encontrado.</returns>
         [HttpGet("{id}")]
-        public async Task<LikeDto?> GetLikeById(Guid id)
+        public async Task<LikeDto?> GetLikeById(long id)
         {
             return await _likeService.GetLikeById(id);
         }
@@ -62,7 +62,7 @@ namespace CleanSharpArchitecture.Controllers
         /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
         /// <returns>Retorna uma coleção de <see cref="LikeDto"/>.</returns>
         [HttpGet]
-        public async Task<IEnumerable<LikeDto>> GetAllLikes([FromQuery] Guid? postId, [FromQuery] EntityStatus? status, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IEnumerable<LikeDto>> GetAllLikes([FromQuery] long? postId, [FromQuery] EntityStatus? status, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             return await _likeService.GetAllLikes(postId, status, pageNumber, pageSize);
         }

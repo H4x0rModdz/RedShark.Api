@@ -3,6 +3,7 @@ using CleanSharpArchitecture.Application.DTOs.Feeds.Responses;
 using CleanSharpArchitecture.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CleanSharpArchitecture.Controllers
 {
@@ -22,13 +23,13 @@ namespace CleanSharpArchitecture.Controllers
         /// DTO contendo os parâmetros de filtragem (como cursor ou data de referência) e paginação.
         /// </param>
         /// <returns>Retorna os posts ordenados conforme a lógica de feed.</returns>
-        [HttpGet]
+        [HttpGet] // GET: api/Feed
         public async Task<FeedResponseDto> GetFeed([FromQuery] FeedRequestDto feedRequestDto)
         {
-            if (feedRequestDto.UserId == Guid.Empty || feedRequestDto.UserId is null) // TODO: Fix Id is null -> Value cannot be null. (Parameter 'input')
+            if (feedRequestDto.UserId is null)
             {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-                feedRequestDto.UserId = Guid.Parse(userId);
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User Id not found in token.");
+                feedRequestDto.UserId = long.Parse(userIdClaim);
             }
 
             return await _feedService.GetFeedAsync(feedRequestDto);

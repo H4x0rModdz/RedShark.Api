@@ -2,10 +2,10 @@
 {
     public class CommentDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
 
         // Informações do usuário que fez o comentário
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public string Name { get; set; }
         public string UserName { get; set; }
         public string UserImage { get; set; }

@@ -2,7 +2,7 @@
 {
     public class UserInterest : BaseEntity
     {
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public List<Interest> Interests { get; set; }
     }
 }

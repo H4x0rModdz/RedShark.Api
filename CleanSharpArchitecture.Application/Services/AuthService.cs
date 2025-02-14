@@ -153,7 +153,6 @@ namespace CleanSharpArchitecture.Infrastructure.Services
                 Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 ProfileImageUrl = imageUrl,
                 Biography = registerDto.Biography,
-                //Interests = registerDto.Interests,
             };
 
             return await _userRepository.Create(newUser);

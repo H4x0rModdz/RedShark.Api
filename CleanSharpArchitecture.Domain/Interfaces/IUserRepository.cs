@@ -26,7 +26,7 @@ namespace CleanSharpArchitecture.Application.Repositories.Interfaces
         /// </summary>
         /// <param name="id">O ID do usuário a ser buscado.</param>
         /// <returns>Uma tarefa que representa a operação assíncrona, contendo o usuário encontrado ou null.</returns>
-        Task<User> SelectById(Guid id);
+        Task<User> SelectById(long id);
 
         /// <summary>
         /// Atualiza as informações de um usuário existente.
@@ -40,7 +40,7 @@ namespace CleanSharpArchitecture.Application.Repositories.Interfaces
         /// </summary>
         /// <param name="id">O ID do usuário a ser removido.</param>
         /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-        Task Delete(Guid id);
+        Task Delete(long id);
 
 
         /// <summary>

@@ -3,6 +3,6 @@
     public class CreateNotificationDto
     {
         public string Content { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
     }
 }

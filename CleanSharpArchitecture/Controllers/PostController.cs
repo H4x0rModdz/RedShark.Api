@@ -1,8 +1,10 @@
-﻿using CleanSharpArchitecture.Application.DTOs.Posts.Request;
+﻿using CleanSharpArchitecture.Application.DTOs.Feeds.Requests;
+using CleanSharpArchitecture.Application.DTOs.Posts.Request;
 using CleanSharpArchitecture.Application.DTOs.Posts.Response;
 using CleanSharpArchitecture.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CleanSharpArchitecture.Controllers
 {
@@ -19,6 +21,9 @@ namespace CleanSharpArchitecture.Controllers
         [Consumes("multipart/form-data")]
         public async Task<PostResultDto> CreatePost([FromForm] CreatePostDto postDto)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User Id not found in token.");
+            postDto.UserId = long.Parse(userIdClaim);
+
             return await _postService.CreatePost(postDto);
         }
 
@@ -30,7 +35,7 @@ namespace CleanSharpArchitecture.Controllers
         }
 
         [HttpDelete("{id}")] // DELETE: api/Post/{id}
-        public async Task<PostResultDto> DeletePost(Guid id)
+        public async Task<PostResultDto> DeletePost(long id)
         {
             return await _postService.DeletePost(id);
         }
@@ -42,7 +47,7 @@ namespace CleanSharpArchitecture.Controllers
         }
 
         [HttpGet("{id}")] // GET: api/Post/{id}
-        public async Task<GetPostDto?> GetPostById(Guid id)
+        public async Task<GetPostDto?> GetPostById(long id)
         {
             return await _postService.GetPostById(id);
         }

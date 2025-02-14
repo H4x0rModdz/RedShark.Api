@@ -24,7 +24,7 @@
                 return post;
             }
 
-            public async Task<Post?> GetById(Guid id)
+            public async Task<Post?> GetById(long id)
             {
                 return await _context.Posts
                     .Include(p => p.Images)
@@ -49,7 +49,7 @@
                 await _context.SaveChangesAsync();
             }
 
-            public async Task Delete(Guid id)
+            public async Task Delete(long id)
             {
                 var post = await GetById(id);
                 if (post != null)
@@ -59,7 +59,7 @@
                 }
             }
 
-            public async Task<IEnumerable<PostImage>> GetImagesByPostId(Guid postId)
+            public async Task<IEnumerable<PostImage>> GetImagesByPostId(long postId)
             {
                 return await _context.PostImages
                     .Where(pi => pi.PostId == postId)
@@ -78,7 +78,7 @@
                 await _context.SaveChangesAsync();
             }
 
-            public async Task<IEnumerable<Post>> GetPostsForFeed(IEnumerable<Guid> followedUserIds, string? cursor, int pageSize)
+            public async Task<IEnumerable<Post>> GetPostsForFeed(IEnumerable<long> followedUserIds, string? cursor, int pageSize)
             {
                 // Inicia a query sem filtrar por UserId
                 var query = _context.Posts
@@ -90,17 +90,16 @@
                         .ThenInclude(c => c.Replies)
                     .AsQueryable();
 
-                // Se um cursor for fornecido, filtra os posts com CreatedAt anterior ao cursor.
+                // Se um cursor for fornecido, convertemos para long e pegamos só posts com Id menor que o cursor.
                 if (!string.IsNullOrEmpty(cursor))
                 {
-                    DateTime cursorDate = DateTime.Parse(cursor, null, DateTimeStyles.RoundtripKind);
-                    query = query.Where(p => p.CreatedAt < cursorDate);
+                    long cursorId = long.Parse(cursor);
+                    query = query.Where(p => p.Id < cursorId);
                 }
 
-                // Ordena: primeiro, prioriza os posts cujo UserId esteja na lista de seguidos,
-                // atribuindo 1 se o post for de um seguido e 0 caso contrário; depois ordena por data de criação.
+                // Ordena priorizando posts de usuários seguidos e depois por Id (desc).
                 query = query.OrderByDescending(p => followedUserIds.Contains(p.UserId) ? 1 : 0)
-                             .ThenByDescending(p => p.CreatedAt)
+                             .ThenByDescending(p => p.Id)
                              .Take(pageSize);
 
                 return await query.ToListAsync();

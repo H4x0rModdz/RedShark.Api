@@ -9,7 +9,7 @@
         /// <summary>
         /// ID do like criado (caso a operação tenha sido de criação).
         /// </summary>
-        public Guid? LikeId { get; set; }
+        public long? LikeId { get; set; }
         /// <summary>
         /// Lista de erros, se houver.
         /// </summary>

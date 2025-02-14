@@ -5,11 +5,11 @@
         /// <summary>
         /// ID do like.
         /// </summary>
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         /// <summary>
         /// ID do usuário que deu o like.
         /// </summary>
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         /// <summary>
         /// Nome do usuário que deu o like.
         /// </summary>
@@ -17,6 +17,6 @@
         /// <summary>
         /// ID do post curtido.
         /// </summary>
-        public Guid PostId { get; set; }
+        public long PostId { get; set; }
     }
 }
