@@ -6,6 +6,6 @@ namespace CleanSharpArchitecture.Application.DTOs.Posts.Request
     {
         public string Content { get; set; }
         public List<IFormFile>? Images { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
     }
 }

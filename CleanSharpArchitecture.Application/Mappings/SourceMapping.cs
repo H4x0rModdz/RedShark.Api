@@ -47,7 +47,13 @@ namespace CleanSharpArchitecture.Application.Mappings
                 .ForMember(dest => dest.CommentsCount,
                     opt => opt.MapFrom(src => src.Comments.Count))
                 .ForMember(dest => dest.LikesCount,
-                    opt => opt.MapFrom(src => src.Likes.Count));
+                    opt => opt.MapFrom(src => src.Likes.Count))
+                .ForMember(dest => dest.Name,
+                    opt => opt.MapFrom(src => src.User.Name))
+                .ForMember(dest => dest.UserName,
+                    opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.UserImage,
+                    opt => opt.MapFrom(src => src.User.ProfileImageUrl));
 
             CreateMap<PostImage, PostImageDto>();
 

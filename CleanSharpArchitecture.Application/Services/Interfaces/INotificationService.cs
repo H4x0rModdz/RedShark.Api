@@ -9,6 +9,6 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
         Task<NotificationDto> CreateNotification(CreateNotificationDto dto);
         Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto);
         Task<IEnumerable<NotificationDto>> GetAllNotifications(int pageNumber, int pageSize);
-        Task<NotificationDto> GetNotificationById(Guid id);
+        Task<NotificationDto> GetNotificationById(long id);
     }
 }

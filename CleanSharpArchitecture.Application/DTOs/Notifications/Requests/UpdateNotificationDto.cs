@@ -2,7 +2,7 @@
 {
     public class UpdateNotificationDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string Content { get; set; }
         public bool IsRead { get; set; }
     }

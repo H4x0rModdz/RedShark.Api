@@ -15,7 +15,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Post>> GetPostsForFeed(IEnumerable<Guid> followedUserIds, string? cursor, int pageSize)
+        public async Task<List<Post>> GetPostsForFeed(IEnumerable<long> followedUserIds, string? cursor, int pageSize)
         {
             var query = _context.Posts.AsQueryable();
 

@@ -8,10 +8,10 @@ namespace CleanSharpArchitecture.Application.DTOs.Notifications.Responses
 {
     public class NotificationResultDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string Content { get; set; }
         public bool IsRead { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string Status { get; set; } // Ex.: "Active", "Inactive", etc.

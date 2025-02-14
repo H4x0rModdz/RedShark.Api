@@ -75,6 +75,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
 
             return new LoginResultDto
             {
+                Id = user.Id,
                 Success = true,
                 Token = token,
                 Errors = new List<string>()
@@ -146,6 +147,7 @@ namespace CleanSharpArchitecture.Infrastructure.Services
 
             var newUser = new User
             {
+                UserName = registerDto.UserName,
                 Name = registerDto.Name,
                 Email = registerDto.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),

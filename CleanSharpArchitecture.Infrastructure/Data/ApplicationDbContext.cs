@@ -122,10 +122,10 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Follower>()
-                .HasOne(f => f.FollowerUser)
-                .WithMany()
-                .HasForeignKey(f => f.FollowerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                 .HasOne(f => f.FollowerUser)
+                 .WithMany(u => u.Following)
+                 .HasForeignKey(f => f.FollowerId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
             // Badge
             modelBuilder.Entity<Badge>()

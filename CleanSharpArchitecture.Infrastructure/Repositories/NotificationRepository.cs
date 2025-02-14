@@ -43,6 +43,6 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Notification> GetNotificationByIdAsync(Guid id) => await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+        public async Task<Notification> GetNotificationByIdAsync(long id) => await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
     }
 }

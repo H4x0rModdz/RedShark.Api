@@ -34,7 +34,7 @@ namespace CleanSharpArchitecture.Controllers
         }
 
         [HttpGet("{id}")] // GET: api/Notification/{id}
-        public async Task<NotificationDto?> GetNotificationById(Guid id)
+        public async Task<NotificationDto?> GetNotificationById(long id)
         {
             return await _notificationService.GetNotificationById(id);
         }

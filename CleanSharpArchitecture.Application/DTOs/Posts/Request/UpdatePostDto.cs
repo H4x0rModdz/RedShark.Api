@@ -5,9 +5,9 @@ namespace CleanSharpArchitecture.Application.DTOs.Posts.Request
 {
     public class UpdatePostDto
     {
-        public Guid PostId { get; set; }
+        public long PostId { get; set; }
         public string Content { get; set; }
-        public IEnumerable<Guid>? ImagesToKeep { get; set; } = new List<Guid>();
+        public IEnumerable<long>? ImagesToKeep { get; set; } = new List<long>();
         public IEnumerable<IFormFile>? NewImages { get; set; } = new List<IFormFile>();
         //public IEnumerable<PostImageDto>? Images { get; set; } = new List<PostImageDto>();
     }

@@ -34,9 +34,11 @@ namespace CleanSharpArchitecture.Application.Services
 
             // 3. Mapear os posts para o DTO de saída usando AutoMapper.
             var postDtos = _mapper.Map<List<PostDto>>(posts);
-
-            // 4. Definir o cursor para a próxima página (por exemplo, utilizando a data de criação do último post).
-            var nextCursor = postDtos.Any() ? postDtos.Last().CreatedAt.ToString("o") : null;
+            
+            // 4. Definir o cursor para a próxima página pelo Id.
+            var nextCursor = postDtos.Any()
+                ? postDtos.Last().Id.ToString()
+                : null;
 
             // 5. Montar e retornar o FeedResponseDto.
             return new FeedResponseDto

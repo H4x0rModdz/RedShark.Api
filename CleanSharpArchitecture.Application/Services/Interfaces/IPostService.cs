@@ -7,8 +7,8 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
     {
         Task<PostResultDto> CreatePost(CreatePostDto postDto);
         Task<PostResultDto> UpdatePost(UpdatePostDto postDto);
-        Task<PostResultDto> DeletePost(Guid postId);
+        Task<PostResultDto> DeletePost(long postId);
         Task<IEnumerable<GetPostDto>> GetAllPosts(int pageNumber = 1, int pageSize = 10);
-        Task<GetPostDto?> GetPostById(Guid postId);
+        Task<GetPostDto?> GetPostById(long postId);
     }
 }

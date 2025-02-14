@@ -47,9 +47,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => // with origins -> production
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins
+        (
+            "http://localhost:3000"
+        )
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();
     });
 });
 
@@ -93,5 +97,5 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<NotificationHub>("/notificationHub").RequireCors("CorsPolicy");
 app.Run();

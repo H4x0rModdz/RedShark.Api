@@ -22,7 +22,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             return like;
         }
 
-        public async Task Delete(Guid likeId)
+        public async Task Delete(long likeId)
         {
             var like = await GetById(likeId);
             if (like != null)
@@ -32,7 +32,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             }
         }
 
-        public async Task<Like?> GetById(Guid likeId)
+        public async Task<Like?> GetById(long likeId)
         {
             return await _context.Likes
                 .Include(l => l.User)
@@ -51,7 +51,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
         /// <param name="pageNumber">Número da página (padrão 1).</param>
         /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
         /// <returns>Retorna uma coleção paginada de likes.</returns>
-        public async Task<IEnumerable<Like>> GetAll(Guid? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Like>> GetAll(long? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.Likes
                 .Include(l => l.User)

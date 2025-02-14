@@ -30,16 +30,11 @@ namespace CleanSharpArchitecture.Application.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Name)
-                    // Você pode adicionar outros claims conforme necessário
+                    new Claim(ClaimTypes.Name, user.Name),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
-                //AdditionalHeaderClaims = new Dictionary<string, object>
-                //{
-                //    { "kid", "your-kid" }
-                //},
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

@@ -7,6 +7,6 @@ namespace CleanSharpArchitecture.Domain.Interfaces
         Task<Notification> CreateNotificationAsync(Notification notification);
         Task<Notification> UpdateNotificationAsync(Notification notification);
         Task<IEnumerable<Notification>> GetAllNotificationsAsync(int pageNumber, int pageSize);
-        Task<Notification> GetNotificationByIdAsync(Guid id);
+        Task<Notification> GetNotificationByIdAsync(long id);
     }
 }

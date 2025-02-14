@@ -13,7 +13,7 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Guid>> GetFollowedUserIds(Guid followerId)
+        public async Task<IEnumerable<long>> GetFollowedUserIds(long followerId)
         {
             return await _context.Followers
                 .Where(f => f.FollowerId == followerId)

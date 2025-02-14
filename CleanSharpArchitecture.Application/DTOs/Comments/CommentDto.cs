@@ -2,12 +2,18 @@
 {
     public class CommentDto
     {
-        public Guid Id { get; set; }
-        public string Content { get; set; }
-        public Guid UserId { get; set; }
+        public long Id { get; set; }
+
+        // Informações do usuário que fez o comentário
+        public long UserId { get; set; }
+        public string Name { get; set; }
         public string UserName { get; set; }
-        public Guid PostId { get; set; }
+        public string UserImage { get; set; }
+
+        // Conteúdo e estatísticas do comentário
+        public string Content { get; set; }
+        public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

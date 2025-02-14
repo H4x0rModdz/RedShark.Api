@@ -28,19 +28,19 @@ namespace CleanSharpArchitecture.Controllers
         }
 
         [HttpGet("{id}")] // GET /api/user/{id}
-        public async Task<ActionResult<UserDto>> GetUserById([FromQuery] Guid id, EntityStatus? status, string? include)
+        public async Task<ActionResult<UserDto>> GetUserById([FromQuery] long id, EntityStatus? status, string? include)
         {
             return await _userService.GetUserById(id);
         }
 
         [HttpPut("{id}")] // PUT /api/user/{id}
-        public async Task<ActionResult<UpdateUserResultDto>> UpdateUser(Guid id, [FromBody] UpdateUserDto updateUserDto)
+        public async Task<ActionResult<UpdateUserResultDto>> UpdateUser(long id, [FromBody] UpdateUserDto updateUserDto)
         {
             return await _userService.UpdateUser(updateUserDto);
         }
 
         [HttpDelete("{id}")] // DELETE /api/user/{id}
-        public async Task<ActionResult<DeleteUserResultDto>> DeleteUser(Guid id)
+        public async Task<ActionResult<DeleteUserResultDto>> DeleteUser(long id)
         {
             return await _userService.DeleteUser(id);
         }
