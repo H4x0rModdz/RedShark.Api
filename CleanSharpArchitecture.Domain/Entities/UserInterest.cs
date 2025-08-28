@@ -3,6 +3,8 @@
     public class UserInterest : BaseEntity
     {
         public long UserId { get; set; }
-        public List<Interest> Interests { get; set; }
+        public User User { get; set; }
+        public long InterestId { get; set; }
+        public Interest Interest { get; set; }
     }
 }

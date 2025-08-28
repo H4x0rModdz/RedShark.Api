@@ -101,7 +101,7 @@ namespace CleanSharpArchitecture.Application.Mappings
                 .ForMember(dest => dest.LikesCount,
                     opt => opt.MapFrom(src => src.Likes.Count))
                 .ForMember(dest => dest.CommentsCount,
-                    opt => opt.MapFrom(src => 0)); // Comments não têm sub-comentários no momento
+                    opt => opt.MapFrom(src => 0));
             
             #endregion Comment
 
