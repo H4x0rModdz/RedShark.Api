@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CleanSharpArchitecture-eaaf0827-df9c-4893-abe0-e2a7f0f48234</UserSecretsId>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,12 +24,18 @@
     <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="3.2.2" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.Threading.RateLimiting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CleanSharpArchitecture.Application\CleanSharpArchitecture.Application.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.Infrastructure\CleanSharpArchitecture.Infrastructure.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.ServiceDefaults\CleanSharpArchitecture.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.CrossCutting\CleanSharpArchitecture.CrossCutting.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.Monitoring\CleanSharpArchitecture.Monitoring.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.BackgroundTasks\CleanSharpArchitecture.BackgroundTasks.csproj" />
   </ItemGroup>
 
 </Project>
