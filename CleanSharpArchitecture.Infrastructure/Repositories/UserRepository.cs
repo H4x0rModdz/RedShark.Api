@@ -91,7 +91,16 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
         /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task Update(User user)
         {
-            _context.Users.Update(user);
+            // Se a entidade já estiver sendo rastreada, apenas marca como modificada
+            var entry = _context.Entry(user);
+            if (entry.State == EntityState.Detached)
+            {
+                _context.Users.Update(user);
+            }
+            else
+            {
+                entry.State = EntityState.Modified;
+            }
             await _context.SaveChangesAsync();
         }
 

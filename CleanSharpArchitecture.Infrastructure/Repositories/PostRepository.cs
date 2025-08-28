@@ -45,7 +45,16 @@
 
             public async Task Update(Post post)
             {
-                _context.Posts.Update(post);
+                // Se a entidade já estiver sendo rastreada, apenas marca como modificada
+                var entry = _context.Entry(post);
+                if (entry.State == EntityState.Detached)
+                {
+                    _context.Posts.Update(post);
+                }
+                else
+                {
+                    entry.State = EntityState.Modified;
+                }
                 await _context.SaveChangesAsync();
             }
 

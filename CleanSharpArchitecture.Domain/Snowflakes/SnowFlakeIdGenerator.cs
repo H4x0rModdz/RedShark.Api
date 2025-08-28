@@ -65,10 +65,15 @@
                 {
                     _sequence = (_sequence + 1) & SequenceMask;
                     if (_sequence == 0)
+                    {
+                        // Sequência esgotada no mesmo milissegundo, aguarda próximo milissegundo
                         timestamp = WaitUntilNextMillis(_lastTimestamp);
+                        _sequence = 0; // Reset da sequência para o novo timestamp
+                    }
                 }
                 else
                 {
+                    // Novo timestamp, reset da sequência
                     _sequence = 0;
                 }
 

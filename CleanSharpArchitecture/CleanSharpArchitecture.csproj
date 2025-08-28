@@ -1,33 +1,41 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CleanSharpArchitecture-eaaf0827-df9c-4893-abe0-e2a7f0f48234</UserSecretsId>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.12" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="3.2.2" />
-    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.15.2" />
-    <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="3.2.2" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.14.0" />
+    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="3.14.0" />
+    <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="3.14.0" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageReference Include="System.Threading.RateLimiting" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CleanSharpArchitecture.Application\CleanSharpArchitecture.Application.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.Infrastructure\CleanSharpArchitecture.Infrastructure.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.ServiceDefaults\CleanSharpArchitecture.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.CrossCutting\CleanSharpArchitecture.CrossCutting.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.Monitoring\CleanSharpArchitecture.Monitoring.csproj" />
+    <ProjectReference Include="..\CleanSharpArchitecture.BackgroundTasks\CleanSharpArchitecture.BackgroundTasks.csproj" />
   </ItemGroup>
 
 </Project>

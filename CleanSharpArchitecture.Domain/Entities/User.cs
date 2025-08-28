@@ -33,6 +33,7 @@ namespace CleanSharpArchitecture.Domain.Entities
 
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<UserChat> Chats { get; set; } = new List<UserChat>();
+        public ICollection<UserInterest> UserInterests { get; set; } = new List<UserInterest>();
 
         public bool IsAccountLocked() => IsLocked && LockedUntil > DateTime.UtcNow;
 

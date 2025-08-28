@@ -24,6 +24,8 @@ namespace CleanSharpArchitecture.Infrastructure.Data
         public DbSet<Chat> Chats { get; set; }
         public DbSet<UserChat> UserChats { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Interest> Interests { get; set; }
+        public DbSet<UserInterest> UserInterests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -91,7 +93,17 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasOne(l => l.Post)
                 .WithMany(p => p.Likes)
                 .HasForeignKey(l => l.PostId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.Comment)
+                .WithMany(c => c.Likes)
+                .HasForeignKey(l => l.CommentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Constraint: Like deve ser EM um Post OU em um Comment, mas não ambos
+            modelBuilder.Entity<Like>()
+                .HasCheckConstraint("CK_Like_PostOrComment", "(PostId IS NOT NULL AND CommentId IS NULL) OR (PostId IS NULL AND CommentId IS NOT NULL)");
 
             // Comment
             modelBuilder.Entity<Comment>()
@@ -110,6 +122,13 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Self-referencing relationship for Comment replies
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.ParentComment)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Follower
             modelBuilder.Entity<Follower>()
@@ -216,6 +235,28 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasOne(cm => cm.User)
                 .WithMany()
                 .HasForeignKey(cm => cm.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Interest
+            modelBuilder.Entity<Interest>()
+                .Property(i => i.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            // UserInterest
+            modelBuilder.Entity<UserInterest>()
+                .HasKey(ui => ui.Id);
+
+            modelBuilder.Entity<UserInterest>()
+                .HasOne(ui => ui.User)
+                .WithMany(u => u.UserInterests)
+                .HasForeignKey(ui => ui.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserInterest>()
+                .HasOne(ui => ui.Interest)
+                .WithMany()
+                .HasForeignKey(ui => ui.InterestId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

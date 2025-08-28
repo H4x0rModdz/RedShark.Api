@@ -39,11 +39,31 @@ public static class JwtConfiguration
 
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Red-Shark API", Version = "v1" });
+            options.MapType<long>(() => new OpenApiSchema { Type = "string", Format = "int64" });
+            options.MapType<ulong>(() => new OpenApiSchema { Type = "string", Format = "uint64" });
+
+            options.SwaggerDoc("v1", new OpenApiInfo 
+            { 
+                Title = "Red-Shark API", 
+                Version = "v1",
+                Description = "A social media API built with Clean Architecture",
+                Contact = new OpenApiContact
+                {
+                    Name = "Red-Shark Team"
+                }
+            });
+
+            // Include XML comments for better documentation
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (File.Exists(xmlPath))
+            {
+                options.IncludeXmlComments(xmlPath);
+            }
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "Insira o token JWT desta forma: Bearer {seu token}",
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
@@ -51,22 +71,19 @@ public static class JwtConfiguration
             });
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-            },
-            new List<string>()
-        }
-    });
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         });
 
         return services;

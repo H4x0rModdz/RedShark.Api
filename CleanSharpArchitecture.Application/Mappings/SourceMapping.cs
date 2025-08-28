@@ -92,8 +92,16 @@ namespace CleanSharpArchitecture.Application.Mappings
             #region Comment
 
             CreateMap<Comment, CommentDto>()
+                .ForMember(dest => dest.Name,
+                    opt => opt.MapFrom(src => src.User.Name))
                 .ForMember(dest => dest.UserName,
-                    opt => opt.MapFrom(src => src.User.Name));
+                    opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.UserImage,
+                    opt => opt.MapFrom(src => src.User.ProfileImageUrl))
+                .ForMember(dest => dest.LikesCount,
+                    opt => opt.MapFrom(src => src.Likes.Count))
+                .ForMember(dest => dest.CommentsCount,
+                    opt => opt.MapFrom(src => 0));
             
             #endregion Comment
 
