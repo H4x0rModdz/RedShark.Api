@@ -37,6 +37,8 @@ builder.Services.AddControllers(options =>
 })
 .AddJsonOptions(options =>
 {
+    options.JsonSerializerOptions.NumberHandling =
+          JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     options.JsonSerializerOptions.MaxDepth = 64;

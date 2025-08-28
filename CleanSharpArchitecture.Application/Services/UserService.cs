@@ -54,7 +54,7 @@ namespace CleanSharpArchitecture.Application.Services
                     user.ProfileImageUrl = imageUrl;
                 }
 
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 await _userRepository.Update(user);
 
                 Log.Information($"Usuário {user.Name} atualizado com sucesso.");
@@ -73,7 +73,7 @@ namespace CleanSharpArchitecture.Application.Services
             {
                 var user = await FindUser(id);
                 user.Status = EntityStatus.Deleted;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
 
                 await _userRepository.Update(user);
                 Log.Information($"Usuário {user.Name} removido com sucesso.");

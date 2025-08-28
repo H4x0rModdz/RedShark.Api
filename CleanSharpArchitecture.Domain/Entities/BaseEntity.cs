@@ -14,11 +14,20 @@ namespace CleanSharpArchitecture.Domain.Entities
         private static readonly SnowflakeIdGenerator IdGenerator = new SnowflakeIdGenerator(workerId: 1, datacenterId: 1);
 
         /// <summary>
+        /// Construtor que gera o ID único imediatamente
+        /// </summary>
+        protected BaseEntity()
+        {
+            Id = IdGenerator.NextId();
+        }
+
+        /// <summary>
         /// Identificador único gerado com base no algoritmo Snowflake.
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public long Id { get; set; } = IdGenerator.NextId();
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public long Id { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
     }

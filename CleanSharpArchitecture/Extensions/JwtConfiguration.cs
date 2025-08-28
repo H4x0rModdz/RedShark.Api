@@ -39,6 +39,9 @@ public static class JwtConfiguration
 
         services.AddSwaggerGen(options =>
         {
+            options.MapType<long>(() => new OpenApiSchema { Type = "string", Format = "int64" });
+            options.MapType<ulong>(() => new OpenApiSchema { Type = "string", Format = "uint64" });
+
             options.SwaggerDoc("v1", new OpenApiInfo 
             { 
                 Title = "Red-Shark API", 

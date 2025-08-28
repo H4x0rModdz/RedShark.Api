@@ -93,13 +93,13 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasOne(l => l.Post)
                 .WithMany(p => p.Likes)
                 .HasForeignKey(l => l.PostId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Like>()
                 .HasOne(l => l.Comment)
                 .WithMany(c => c.Likes)
                 .HasForeignKey(l => l.CommentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Constraint: Like deve ser EM um Post OU em um Comment, mas não ambos
             modelBuilder.Entity<Like>()
