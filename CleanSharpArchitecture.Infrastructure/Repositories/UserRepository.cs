@@ -1,4 +1,4 @@
-using CleanSharpArchitecture.Application.Repositories.Interfaces;
+using CleanSharpArchitecture.Domain.Interfaces;
 using CleanSharpArchitecture.Domain.Dictionaries;
 using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Enums;
@@ -17,11 +17,6 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             _context = context;
         }
 
-        /// <summary>
-        /// Cria um novo usuário no repositório.
-        /// </summary>
-        /// <param name="user">O usuário a ser criado.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona, contendo o usuário criado.</returns>
         public async Task<User> Create(User user)
         {
             await _context.Users.AddAsync(user);
@@ -64,34 +59,26 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             return query;
         }
 
-        /// <summary>
-        /// Seleciona um usuário pelo seu e-mail.
-        /// </summary>
-        /// <param name="email">O e-mail do usuário a ser buscado.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona, contendo o usuário encontrado ou null.</returns>
         public async Task<User> SelectByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        /// <summary>
-        /// Seleciona um usuário pelo seu ID.
-        /// </summary>
-        /// <param name="id">O ID do usuário a ser buscado.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona, contendo o usuário encontrado ou null.</returns>
         public async Task<User> SelectById(long id)
         {
             return await _context.Users.FindAsync(id);
         }
 
-        /// <summary>
-        /// Atualiza as informações de um usuário existente.
-        /// </summary>
-        /// <param name="user">O usuário com as informações atualizadas.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
+        public async Task<User> SelectByUserName(string userName)
+        {
+            var query = _context.Users.AsQueryable();
+                        
+            return await query.FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+
         public async Task Update(User user)
         {
-            // Se a entidade já estiver sendo rastreada, apenas marca como modificada
+            // Handle entity tracking to avoid conflicts
             var entry = _context.Entry(user);
             if (entry.State == EntityState.Detached)
             {
@@ -104,11 +91,6 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Remove um usuário do repositório.
-        /// </summary>
-        /// <param name="id">O ID do usuário a ser removido.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task Delete(long id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -119,10 +101,6 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
             }
         }
 
-        /// <summary>
-        /// Seleciona um usuário pelo seu código de recuperação de senha.
-        /// </summary>
-        /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task<User> SelectByRecoveryCode(string code)
         {
             return await _context.Users

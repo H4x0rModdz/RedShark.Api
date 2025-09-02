@@ -38,4 +38,8 @@
     <ProjectReference Include="..\CleanSharpArchitecture.BackgroundTasks\CleanSharpArchitecture.BackgroundTasks.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Examples\" />
+  </ItemGroup>
+
 </Project>

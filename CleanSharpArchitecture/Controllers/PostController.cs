@@ -1,11 +1,14 @@
-﻿using CleanSharpArchitecture.Application.DTOs.Feeds.Requests;
+﻿using CleanSharpArchitecture.API.Attributes;
+using CleanSharpArchitecture.API.Extensions;
+using CleanSharpArchitecture.Application.DTOs.Feeds.Requests;
 using CleanSharpArchitecture.Application.DTOs.Posts.Request;
 using CleanSharpArchitecture.Application.DTOs.Posts.Response;
 using CleanSharpArchitecture.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using static System.Net.WebRequestMethods;
 
 namespace CleanSharpArchitecture.Controllers
 {
@@ -32,6 +35,7 @@ namespace CleanSharpArchitecture.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="429">Too many posts created</response>
         [HttpPost]
+        [RequireAuthentication]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(PostResultDto), 200)]
         [ProducesResponseType(400)]
@@ -51,25 +55,12 @@ namespace CleanSharpArchitecture.Controllers
                 });
             }
 
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long userId))
-            {
-                return BadRequest(new PostResultDto
-                {
-                    Success = false,
-                    Errors = new List<string> { "Invalid user authentication." }
-                });
-            }
-
+            var userId = this.GetCurrentUserId();
             postDto.UserId = userId;
+
             var result = await _postService.CreatePost(postDto);
             
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         /// <summary>
@@ -81,11 +72,13 @@ namespace CleanSharpArchitecture.Controllers
         /// <response code="400">Invalid post data</response>
         /// <response code="401">Unauthorized</response>
         /// <response code="404">Post not found</response>
-        [HttpPut]
+        [HttpPatch]
+        [RequirePostOwnership("PostId")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(PostResultDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<PostResultDto>> UpdatePost([FromForm, Required] UpdatePostDto postDto)
         {
@@ -101,14 +94,10 @@ namespace CleanSharpArchitecture.Controllers
                 });
             }
 
-            var result = await _postService.UpdatePost(postDto);
+            var currentUserId = this.GetCurrentUserId();
+            var result = await _postService.UpdatePost(postDto, currentUserId);
             
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         /// <summary>
@@ -121,29 +110,18 @@ namespace CleanSharpArchitecture.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="404">Post not found</response>
         [HttpDelete("{id}")]
+        [RequirePostOwnership("id")]
         [ProducesResponseType(typeof(PostResultDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<PostResultDto>> DeletePost([Required] long id)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new PostResultDto
-                {
-                    Success = false,
-                    Errors = new List<string> { "Invalid post ID." }
-                });
-            }
-
-            var result = await _postService.DeletePost(id);
+            var currentUserId = this.GetCurrentUserId();
+            var result = await _postService.DeletePost(id, currentUserId);
             
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         /// <summary>
@@ -206,6 +184,51 @@ namespace CleanSharpArchitecture.Controllers
             }
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Retrieves paginated posts by user ID
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <param name="pageNumber">Page number (default: 1)</param>
+        /// <param name="pageSize">Items per page (default: 10, max: 100)</param>
+        /// <returns>List of user posts</returns>
+        /// <response code="200">Posts retrieved successfully</response>
+        /// <response code="400">Invalid parameters</response>
+        /// <response code="401">Unauthorized</response>
+        [HttpGet("user/{userId}")]
+        [ValidateUser("userId")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<PostDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<IEnumerable<PostDto>>> GetPostsByUserId(
+            [Required] long userId,
+            [FromQuery, Range(1, int.MaxValue)] int pageNumber = 1,
+            [FromQuery, Range(1, 100)] int pageSize = 10)
+        {
+            var posts = await _postService.GetPostsByUserId(userId, pageNumber, pageSize);
+            return Ok(posts);
+        }
+
+        /// <summary>
+        /// Retrieves the count of posts by user ID
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>Count of user posts</returns>
+        /// <response code="200">Count retrieved successfully</response>
+        /// <response code="400">Invalid user ID</response>
+        /// <response code="401">Unauthorized</response>
+        [HttpGet("user/{userId}/count")]
+        [ValidateUser("userId")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<int>> GetPostsCountByUserId([Required] long userId)
+        {
+            var count = await _postService.GetPostsCountByUserId(userId);
+            return Ok(count);
         }
     }
 }

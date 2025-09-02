@@ -1,6 +1,10 @@
-﻿using CleanSharpArchitecture.Application.DTOs.Users.Requests;
+﻿using CleanSharpArchitecture.API.Attributes;
+using CleanSharpArchitecture.API.Extensions;
+using CleanSharpArchitecture.Application.DTOs.Users.Requests;
 using CleanSharpArchitecture.Application.DTOs.Users.Responses;
 using CleanSharpArchitecture.Application.Services.Interfaces;
+using CleanSharpArchitecture.Application.DTOs.UserPhotos.Requests;
+using CleanSharpArchitecture.Application.DTOs.UserPhotos.Responses;
 using CleanSharpArchitecture.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +19,12 @@ namespace CleanSharpArchitecture.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserPhotoService _userPhotoService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IUserPhotoService userPhotoService)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _userPhotoService = userPhotoService ?? throw new ArgumentNullException(nameof(userPhotoService));
         }
 
         /// <summary>
@@ -61,22 +67,44 @@ namespace CleanSharpArchitecture.Controllers
         }
 
         /// <summary>
+        /// Retrieves user profile information by username
+        /// </summary>
+        [HttpGet("profile/{userName}")]
+        [ProducesResponseType(typeof(UserProfileDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<UserProfileDto>> GetUserProfile([Required] string userName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                return BadRequest("Invalid username.");
+
+            var result = await _userService.GetUserProfile(userName, cancellationToken);
+            if (result == null)
+                return NotFound("User not found.");
+                
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Updates user information
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
+        [RequireUserOwnership("id")]
         [ProducesResponseType(typeof(UpdateUserResultDto), 200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult<UpdateUserResultDto>> UpdateUser(
             [Required] long id, 
-            [FromBody, Required] UpdateUserDto updateUserDto)
+            [FromForm, Required] UpdateUserDto updateUserDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (id <= 0)
-                return BadRequest("Invalid user ID.");
-
-            var result = await _userService.UpdateUser(updateUserDto);
+            updateUserDto.Id = id;
+            var currentUserId = this.GetCurrentUserId();
+            
+            var result = await _userService.UpdateUser(updateUserDto, currentUserId);
             return Ok(result);
         }
 
@@ -84,15 +112,117 @@ namespace CleanSharpArchitecture.Controllers
         /// Deletes a user account
         /// </summary>
         [HttpDelete("{id}")]
+        [RequireUserOwnership("id")]
         [ProducesResponseType(typeof(DeleteUserResultDto), 200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<ActionResult<DeleteUserResultDto>> DeleteUser([Required] long id)
         {
-            if (id <= 0)
-                return BadRequest("Invalid user ID.");
-
-            var result = await _userService.DeleteUser(id);
+            var currentUserId = this.GetCurrentUserId();
+            var result = await _userService.DeleteUser(id, currentUserId);
             return Ok(result);
         }
+
+        #region UserPhoto Endpoints
+
+        /// <summary>
+        /// Gets all photos for a specific user
+        /// </summary>
+        [HttpGet("{userId}/photos")]
+        [ProducesResponseType(typeof(IEnumerable<UserPhotoDto>), 200)]
+        public async Task<ActionResult<IEnumerable<UserPhotoDto>>> GetUserPhotos([Required] long userId)
+        {
+            var photos = await _userPhotoService.GetUserPhotos(userId);
+            return Ok(photos);
+        }
+
+        /// <summary>
+        /// Gets a specific photo by ID
+        /// </summary>
+        [HttpGet("photos/{photoId}")]
+        [ProducesResponseType(typeof(UserPhotoDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<UserPhotoDto>> GetUserPhotoById([Required] long photoId)
+        {
+            var photo = await _userPhotoService.GetUserPhotoById(photoId);
+            if (photo == null)
+                return NotFound("Photo not found.");
+            
+            return Ok(photo);
+        }
+
+        /// <summary>
+        /// Creates a new photo for the authenticated user
+        /// </summary>
+        [HttpPost("{userId}/photos")]
+        [RequireUserOwnership("userId")]
+        [ProducesResponseType(typeof(UserPhotoDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public async Task<ActionResult<UserPhotoDto>> CreateUserPhoto(
+            [Required] long userId, 
+            [FromBody] CreateUserPhotoDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var photo = await _userPhotoService.CreateUserPhoto(userId, request);
+            return CreatedAtAction(nameof(GetUserPhotoById), new { photoId = photo.Id }, photo);
+        }
+
+        /// <summary>
+        /// Updates a user photo
+        /// </summary>
+        [HttpPut("photos/{photoId}")]
+        [RequireAuthentication]
+        [ProducesResponseType(typeof(UserPhotoDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<UserPhotoDto>> UpdateUserPhoto(
+            [Required] long photoId, 
+            [FromBody] UpdateUserPhotoDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var currentUserId = this.GetCurrentUserId();
+            
+            try
+            {
+                var photo = await _userPhotoService.UpdateUserPhoto(photoId, currentUserId, request);
+                return Ok(photo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a user photo
+        /// </summary>
+        [HttpDelete("photos/{photoId}")]
+        [RequireAuthentication]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> DeleteUserPhoto([Required] long photoId)
+        {
+            var currentUserId = this.GetCurrentUserId();
+            var success = await _userPhotoService.DeleteUserPhoto(photoId, currentUserId);
+            
+            if (!success)
+                return NotFound("Photo not found or you don't have permission to delete it.");
+            
+            return Ok();
+        }
+
+        #endregion
+
     }
 }
+
+

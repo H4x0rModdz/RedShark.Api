@@ -37,6 +37,19 @@ namespace CleanSharpArchitecture.Application.Validations
             RuleFor(x => x.ProfileImage)
                 .Must(BeValidImageFile).WithMessage("Profile image must be a valid image file (jpg, jpeg, png, gif, webp)")
                 .When(x => x.ProfileImage != null);
+
+            RuleFor(x => x.State)
+                .MaximumLength(100).WithMessage("State must not exceed 100 characters");
+
+            RuleFor(x => x.City)
+                .MaximumLength(100).WithMessage("City must not exceed 100 characters");
+
+            RuleFor(x => x.DateOfBirth)
+                .Must(BeValidAge).WithMessage("You must be at least 13 years old")
+                .When(x => x.DateOfBirth != default(DateTime));
+
+            RuleFor(x => x.MaritalStatus)
+                .MaximumLength(50).WithMessage("Marital status must not exceed 50 characters");
         }
 
         private bool BeValidImageFile(Microsoft.AspNetCore.Http.IFormFile? file)
@@ -50,6 +63,15 @@ namespace CleanSharpArchitecture.Application.Validations
                    file.ContentType.StartsWith("image/") &&
                    file.Length > 0 &&
                    file.Length <= 5 * 1024 * 1024; // 5MB max
+        }
+
+        private bool BeValidAge(DateTime dateOfBirth)
+        {
+            var today = DateTime.Today;
+            var age = today.Year - dateOfBirth.Year;
+            if (dateOfBirth.Date > today.AddYears(-age)) age--;
+            
+            return age >= 13;
         }
     }
 }

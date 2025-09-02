@@ -6,10 +6,10 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
     public interface ITokenService
     {
         /// <summary>
-        /// Gera um token JWT para o usuário fornecido.
+        /// Generates a JWT token for the provided user.
         /// </summary>
-        /// <param name="user">O usuário para o qual o token será gerado.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona, contendo o token gerado.</returns>
+        /// <param name="user">The user for whom the token will be generated.</param>
+        /// <returns>A task representing the asynchronous operation, containing the generated token.</returns>
         string GenerateToken(User user);
     }
 }

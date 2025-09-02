@@ -13,5 +13,7 @@ namespace CleanSharpArchitecture.Application.Interfaces.Repositories
         Task AddImages(IEnumerable<PostImage> images);
         Task RemoveImages(IEnumerable<PostImage> images);
         Task<IEnumerable<Post>> GetPostsForFeed(IEnumerable<long> followedUserIds, string? cursor, int pageSize);
+        Task<IEnumerable<Post>> GetPostsByUserId(long userId, int pageNumber, int pageSize);
+        Task<int> GetPostsCountByUserId(long userId);
     }
 }

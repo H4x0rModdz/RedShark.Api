@@ -19,6 +19,7 @@ namespace CleanSharpArchitecture.Application.DTOs.Users.Requests
         public DateTime UpdatedAt { get; set; }
         public bool IsLocked { get; set; }
         public DateTime? LockedUntil { get; set; }
+        public bool IsVerified { get; set; }
 
         public ICollection<PostDto>? Posts { get; set; }
         public ICollection<Comment>? Comments { get; set; }

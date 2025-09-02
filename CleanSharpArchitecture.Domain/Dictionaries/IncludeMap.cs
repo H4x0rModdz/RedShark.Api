@@ -13,6 +13,7 @@ namespace CleanSharpArchitecture.Domain.Dictionaries
                 { "likes", u => u.Likes },
                 { "badges", u => u.Badges },
                 { "followers", u => u.Followers },
+                { "following", u => u.Following },
                 { "notifications", u => u.Notifications },
                 { "chats", u => u.Chats }
             };

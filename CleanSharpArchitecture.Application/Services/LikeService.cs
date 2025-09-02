@@ -21,11 +21,6 @@ namespace CleanSharpArchitecture.Application.Services
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Cria um novo like para um post.
-        /// </summary>
-        /// <param name="createLikeDto">DTO contendo o UserId e o PostId.</param>
-        /// <returns>Retorna um objeto <see cref="LikeResultDto"/> com o resultado da operação.</returns>
         public async Task<LikeResultDto> CreateLike(CreateLikeDto createLikeDto)
         {
             try
@@ -54,11 +49,6 @@ namespace CleanSharpArchitecture.Application.Services
             }
         }
 
-        /// <summary>
-        /// Exclui um like pelo seu ID.
-        /// </summary>
-        /// <param name="id">ID do like a ser removido.</param>
-        /// <returns>Retorna um objeto <see cref="LikeResultDto"/> com o resultado da operação.</returns>
         public async Task<LikeResultDto> DeleteLike(long id)
         {
             try
@@ -82,33 +72,128 @@ namespace CleanSharpArchitecture.Application.Services
             }
         }
 
-        /// <summary>
-        /// Recupera um like pelo seu ID.
-        /// </summary>
-        /// <param name="id">ID do like.</param>
-        /// <returns>Retorna um <see cref="LikeDto"/> ou null se não encontrado.</returns>
         public async Task<LikeDto?> GetLikeById(long id)
         {
             var like = await _likeRepository.GetById(id);
-            return like == null ? null : _mapper.Map<LikeDto>(id);
+            return like == null ? null : _mapper.Map<LikeDto>(like);
         }
-
-        /// <summary>
-        /// Recupera todos os likes paginados, aplicando filtros opcionais por PostId e EntityStatus.
-        /// </summary>
-        /// <param name="postId">
-        /// Opcional: se fornecido, retorna apenas os likes associados ao post especificado.
-        /// </param>
-        /// <param name="status">
-        /// Opcional: se fornecido, retorna apenas os likes com o status especificado.
-        /// </param>
-        /// <param name="pageNumber">Número da página (padrão 1).</param>
-        /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
-        /// <returns>Retorna uma coleção de <see cref="LikeDto"/>.</returns>
         public async Task<IEnumerable<LikeDto>> GetAllLikes(long? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
         {
             var likes = await _likeRepository.GetAll(postId, status, pageNumber, pageSize);
             return _mapper.Map<IEnumerable<LikeDto>>(likes);
+        }
+
+        public async Task<LikeDto?> GetLikeByUserAndPost(long userId, long postId)
+        {
+            var like = await _likeRepository.GetByUserAndPost(userId, postId);
+            return like == null ? null : _mapper.Map<LikeDto>(like);
+        }
+
+        public async Task<LikeResultDto> ToggleLike(long userId, long postId)
+        {
+            try
+            {
+                Log.Information($"ToggleLike called with UserId: {userId}, PostId: {postId}");
+                
+                var existingLike = await _likeRepository.GetByUserAndPost(userId, postId);
+                
+                if (existingLike != null)
+                {
+                    await _likeRepository.Delete(existingLike.Id);
+                    var likesCount = await _likeRepository.GetLikesCountByPostId(postId);
+                    Log.Information($"Like {existingLike.Id} removed successfully.");
+                    return new LikeResultDto
+                    {
+                        Success = true,
+                        IsLiked = false,
+                        LikesCount = likesCount,
+                        Errors = new List<string>()
+                    };
+                }
+                else
+                {
+                    var newLike = new Like
+                    {
+                        UserId = userId,
+                        PostId = postId,
+                        Status = EntityStatus.Active
+                    };
+
+                    var createdLike = await _likeRepository.Create(newLike);
+                    var likesCount = await _likeRepository.GetLikesCountByPostId(postId);
+                    Log.Information($"Like {createdLike.Id} created successfully.");
+                    return new LikeResultDto
+                    {
+                        Success = true,
+                        LikeId = createdLike.Id,
+                        IsLiked = true,
+                        LikesCount = likesCount,
+                        Errors = new List<string>()
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error toggling like: {ex.Message}");
+                return new LikeResultDto
+                {
+                    Success = false,
+                    Errors = new List<string> { ex.Message }
+                };
+            }
+        }
+
+        public async Task<LikeResultDto> ToggleCommentLike(long userId, long commentId)
+        {
+            try
+            {
+                Log.Information($"ToggleCommentLike called with UserId: {userId}, CommentId: {commentId}");
+                var existingLike = await _likeRepository.GetByUserAndComment(userId, commentId);
+                
+                if (existingLike != null)
+                {
+                    await _likeRepository.Delete(existingLike.Id);
+                    var likesCount = await _likeRepository.GetLikesCountByCommentId(commentId);
+                    Log.Information($"Comment like {existingLike.Id} removed successfully.");
+                    return new LikeResultDto
+                    {
+                        Success = true,
+                        IsLiked = false,
+                        LikesCount = likesCount,
+                        Errors = new List<string>()
+                    };
+                }
+                else
+                {
+                    var newLike = new Like
+                    {
+                        UserId = userId,
+                        CommentId = commentId,
+                        Status = EntityStatus.Active
+                    };
+
+                    var createdLike = await _likeRepository.Create(newLike);
+                    var likesCount = await _likeRepository.GetLikesCountByCommentId(commentId);
+                    Log.Information($"Comment like {createdLike.Id} created successfully.");
+                    return new LikeResultDto
+                    {
+                        Success = true,
+                        LikeId = createdLike.Id,
+                        IsLiked = true,
+                        LikesCount = likesCount,
+                        Errors = new List<string>()
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error toggling comment like: {ex.Message}");
+                return new LikeResultDto
+                {
+                    Success = false,
+                    Errors = new List<string> { ex.Message }
+                };
+            }
         }
     }
 }

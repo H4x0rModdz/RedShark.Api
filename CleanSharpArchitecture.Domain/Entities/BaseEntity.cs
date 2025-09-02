@@ -5,16 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CleanSharpArchitecture.Domain.Entities
 {
     /// <summary>
-    /// Base para todas as entidades, utilizando Snowflake para gerar IDs únicos.
+    /// Base class for all entities, using Snowflake algorithm to generate unique IDs.
     /// </summary>
     public abstract class BaseEntity
     {
-        // Idealmente, o gerador deve ser configurado por meio de injeção de dependências,
-        // mas para simplificar, usamos um gerador estático com workerId e datacenterId fixos.
+        // Ideally, the generator should be configured through dependency injection,
+        // but for simplicity, we use a static generator with fixed workerId and datacenterId.
         private static readonly SnowflakeIdGenerator IdGenerator = new SnowflakeIdGenerator(workerId: 1, datacenterId: 1);
 
         /// <summary>
-        /// Construtor que gera o ID único imediatamente
+        /// Constructor that generates the unique ID immediately
         /// </summary>
         protected BaseEntity()
         {
@@ -22,7 +22,7 @@ namespace CleanSharpArchitecture.Domain.Entities
         }
 
         /// <summary>
-        /// Identificador único gerado com base no algoritmo Snowflake.
+        /// Unique identifier generated based on the Snowflake algorithm.
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Id { get; set; }

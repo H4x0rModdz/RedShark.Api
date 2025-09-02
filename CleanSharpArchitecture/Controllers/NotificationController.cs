@@ -21,7 +21,7 @@ namespace CleanSharpArchitecture.Controllers
             return await _notificationService.CreateNotification(notificationDto);
         }
 
-        [HttpPut] // PUT: api/Notification
+        [HttpPatch] // PATCH: api/Notification
         public async Task<NotificationDto> UpdateNotification(UpdateNotificationDto notificationDto)
         {
             return await _notificationService.UpdateNotification(notificationDto);

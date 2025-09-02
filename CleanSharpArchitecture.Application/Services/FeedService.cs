@@ -26,21 +26,16 @@ namespace CleanSharpArchitecture.Application.Services
 
         public async Task<FeedResponseDto> GetFeedAsync(FeedRequestDto feedRequestDto)
         {
-            // 1. Obter a lista de IDs dos usuários que o usuário autenticado está seguindo.
             var followedUserIds = await _followerRepository.GetFollowedUserIds(feedRequestDto.UserId.Value);
 
-            // 2. Buscar os posts dos usuários seguidos, aplicando paginação baseada no cursor e no tamanho da página.
             var posts = await _postRepository.GetPostsForFeed(followedUserIds, feedRequestDto.Cursor, feedRequestDto.PageSize);
 
-            // 3. Mapear os posts para o DTO de saída usando AutoMapper.
             var postDtos = _mapper.Map<List<PostDto>>(posts);
             
-            // 4. Definir o cursor para a próxima página pelo Id.
             var nextCursor = postDtos.Any()
                 ? postDtos.Last().Id.ToString()
                 : null;
 
-            // 5. Montar e retornar o FeedResponseDto.
             return new FeedResponseDto
             {
                 Posts = postDtos,

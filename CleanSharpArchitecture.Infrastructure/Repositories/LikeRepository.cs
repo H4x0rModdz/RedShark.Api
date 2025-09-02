@@ -39,18 +39,6 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
                 .FirstOrDefaultAsync(l => l.Id == likeId);
         }
 
-        /// <summary>
-        /// Recupera todos os likes paginados, aplicando filtros opcionais por PostId e EntityStatus.
-        /// </summary>
-        /// <param name="postId">
-        /// Opcional: se fornecido, retorna apenas os likes associados ao post especificado.
-        /// </param>
-        /// <param name="status">
-        /// Opcional: se fornecido, retorna apenas os likes com o status especificado.
-        /// </param>
-        /// <param name="pageNumber">Número da página (padrão 1).</param>
-        /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
-        /// <returns>Retorna uma coleção paginada de likes.</returns>
         public async Task<IEnumerable<Like>> GetAll(long? postId, EntityStatus? status, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.Likes
@@ -67,6 +55,34 @@ namespace CleanSharpArchitecture.Infrastructure.Repositories
                          .Take(pageSize);
 
             return await query.ToListAsync();
+        }
+
+        public async Task<Like?> GetByUserAndPost(long userId, long postId)
+        {
+            return await _context.Likes
+                .Include(l => l.User)
+                .FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == postId && l.Status == EntityStatus.Active);
+        }
+
+        public async Task<int> GetLikesCountByPostId(long postId)
+        {
+            return await _context.Likes
+                .Where(l => l.PostId == postId && l.Status == EntityStatus.Active)
+                .CountAsync();
+        }
+
+        public async Task<Like?> GetByUserAndComment(long userId, long commentId)
+        {
+            return await _context.Likes
+                .Include(l => l.User)
+                .FirstOrDefaultAsync(l => l.UserId == userId && l.CommentId == commentId && l.Status == EntityStatus.Active);
+        }
+
+        public async Task<int> GetLikesCountByCommentId(long commentId)
+        {
+            return await _context.Likes
+                .Where(l => l.CommentId == commentId && l.Status == EntityStatus.Active)
+                .CountAsync();
         }
     }
 }
