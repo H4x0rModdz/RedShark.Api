@@ -33,8 +33,12 @@ namespace CleanSharpArchitecture.Application.Mappings
                     opt => opt.MapFrom(src => src.Messages));
 
             CreateMap<ChatMessage, ChatMessageDto>()
+                .ForMember(dest => dest.Name,
+                    opt => opt.MapFrom(src => src.User.Name))
                 .ForMember(dest => dest.UserName,
-                    opt => opt.MapFrom(src => src.User.Name));
+                    opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.UserProfileImage,
+                    opt => opt.MapFrom(src => src.User.ProfileImageUrl));
 
             CreateMap<UserChat, UserChatDto>()
                 .ForMember(dest => dest.ChatName,

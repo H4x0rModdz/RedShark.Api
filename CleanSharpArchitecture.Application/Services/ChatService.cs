@@ -146,7 +146,9 @@ namespace CleanSharpArchitecture.Application.Services
                         Content = sentMessage.Content,
                         ChatId = sentMessage.ChatId.ToString(),
                         UserId = sentMessage.UserId.ToString(),
-                        UserName = sentMessage.User?.Name ?? "User",
+                        Name = sentMessage.User?.Name ?? "User",
+                        UserName = sentMessage.User?.UserName?.ToString() ?? "@user",
+                        UserProfileImage = sentMessage.User?.ProfileImageUrl ?? "https://github.com/shadcn.png",
                         CreatedAt = sentMessage.CreatedAt
                     };
 

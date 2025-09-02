@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\Examples\**" />
+    <Content Remove="Controllers\Examples\**" />
+    <EmbeddedResource Remove="Controllers\Examples\**" />
+    <None Remove="Controllers\Examples\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.8" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
@@ -36,10 +43,6 @@
     <ProjectReference Include="..\CleanSharpArchitecture.CrossCutting\CleanSharpArchitecture.CrossCutting.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.Monitoring\CleanSharpArchitecture.Monitoring.csproj" />
     <ProjectReference Include="..\CleanSharpArchitecture.BackgroundTasks\CleanSharpArchitecture.BackgroundTasks.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\Examples\" />
   </ItemGroup>
 
 </Project>
