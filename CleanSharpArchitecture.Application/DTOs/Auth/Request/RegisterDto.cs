@@ -13,5 +13,9 @@ namespace CleanSharpArchitecture.Application.DTOs.Auth.Request
         public IFormFile ProfileImage { get; set; }
         public string Biography { get; set; }
         public List<UserInterest> Interests { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string MaritalStatus { get; set; }
     }
 }

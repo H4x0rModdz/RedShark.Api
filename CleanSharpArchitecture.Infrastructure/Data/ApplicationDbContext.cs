@@ -1,6 +1,7 @@
 using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Entities.Chats;
 using CleanSharpArchitecture.Domain.Entities.Posts;
+using CleanSharpArchitecture.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSharpArchitecture.Infrastructure.Data
@@ -26,16 +27,37 @@ namespace CleanSharpArchitecture.Infrastructure.Data
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<Interest> Interests { get; set; }
         public DbSet<UserInterest> UserInterests { get; set; }
+        public DbSet<UserPhoto> UserPhotos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // User
+            // User - Email Value Object
             modelBuilder.Entity<User>()
                 .Property(u => u.Email)
+                .HasConversion(
+                    email => email.Value,
+                    value => Email.Create(value))
                 .IsRequired()
-                .HasMaxLength(256);
+                .HasMaxLength(320);
+
+            // User - Username Value Object
+            modelBuilder.Entity<User>()
+                .Property(u => u.UserName)
+                .HasConversion(
+                    username => username.Value,
+                    value => Username.Create(value))
+                .IsRequired()
+                .HasMaxLength(30);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Password)
@@ -53,6 +75,26 @@ namespace CleanSharpArchitecture.Infrastructure.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.Biography)
                 .HasMaxLength(1000);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.CoverImageUrl)
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Location)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Website)
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.MaritalStatus)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Profession)
+                .HasMaxLength(100);
 
             modelBuilder.Entity<User>()
                 .Property(u => u.RecoveryCode)
@@ -87,7 +129,7 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasOne(l => l.User)
                 .WithMany(u => u.Likes)
                 .HasForeignKey(l => l.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Evitar exclusão em cascata do User
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading deletion of User
 
             modelBuilder.Entity<Like>()
                 .HasOne(l => l.Post)
@@ -101,7 +143,7 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasForeignKey(l => l.CommentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Constraint: Like deve ser EM um Post OU em um Comment, mas não ambos
+            // Constraint: Like must be ON a Post OR on a Comment, but not both
             modelBuilder.Entity<Like>()
                 .HasCheckConstraint("CK_Like_PostOrComment", "(PostId IS NOT NULL AND CommentId IS NULL) OR (PostId IS NULL AND CommentId IS NOT NULL)");
 
@@ -115,7 +157,7 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Certifique-se de que está como Restrict
+                .OnDelete(DeleteBehavior.Restrict); // Ensure it is set as Restrict
 
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Post)
@@ -258,6 +300,23 @@ namespace CleanSharpArchitecture.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(ui => ui.InterestId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // UserPhoto
+            modelBuilder.Entity<UserPhoto>()
+                .Property(up => up.ImageUrl)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<UserPhoto>()
+                .Property(up => up.Description)
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<UserPhoto>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.Photos)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

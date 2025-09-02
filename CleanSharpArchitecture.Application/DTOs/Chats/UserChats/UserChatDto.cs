@@ -6,6 +6,8 @@
         public long ChatId { get; set; }
         public long UserId { get; set; }
         public string UserName { get; set; }
+        public string Name { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public string ChatName { get; set; }
     }
 }

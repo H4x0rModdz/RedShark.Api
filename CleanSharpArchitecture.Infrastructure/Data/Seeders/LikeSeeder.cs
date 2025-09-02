@@ -55,12 +55,12 @@ namespace CleanSharpArchitecture.Infrastructure.Data.Seeders
             context.Likes.AddRange(likes);
             await context.SaveChangesAsync();
 
-            // Adicionar likes em comentários (precisa buscar comentários do banco)
+            // Add likes to comments (need to fetch comments from database)
             var comments = context.Comments.ToList();
             
             var commentLikes = new List<Like>
             {
-                // Likes nos comentários principais (não respostas)
+                // Likes on main comments (not replies)
                 new Like { UserId = users[0].Id, CommentId = comments.Where(c => c.ParentCommentId == null).ElementAt(0).Id, CreatedAt = DateTime.UtcNow.AddDays(-4).AddMinutes(10) }, // John likes Jane's welcome comment
                 new Like { UserId = users[2].Id, CommentId = comments.Where(c => c.ParentCommentId == null).ElementAt(0).Id, CreatedAt = DateTime.UtcNow.AddDays(-4).AddMinutes(15) }, // Mike likes Jane's welcome comment
                 new Like { UserId = users[3].Id, CommentId = comments.Where(c => c.ParentCommentId == null).ElementAt(0).Id, CreatedAt = DateTime.UtcNow.AddDays(-4).AddMinutes(20) }, // Sarah likes Jane's welcome comment
@@ -74,7 +74,7 @@ namespace CleanSharpArchitecture.Infrastructure.Data.Seeders
                 new Like { UserId = users[0].Id, CommentId = comments.Where(c => c.ParentCommentId == null).ElementAt(4).Id, CreatedAt = DateTime.UtcNow.AddDays(-1).AddMinutes(5) }, // John likes Mike's FluentValidation comment
                 new Like { UserId = users[1].Id, CommentId = comments.Where(c => c.ParentCommentId == null).ElementAt(4).Id, CreatedAt = DateTime.UtcNow.AddDays(-1).AddMinutes(10) }, // Jane likes Mike's FluentValidation comment
                 
-                // Likes em algumas respostas (comentários aninhados)
+                // Likes on some replies (nested comments)
                 new Like { UserId = users[1].Id, CommentId = comments.Where(c => c.ParentCommentId != null).ElementAt(0).Id, CreatedAt = DateTime.UtcNow.AddDays(-4).AddMinutes(30) }, // Jane likes John's reply
                 new Like { UserId = users[3].Id, CommentId = comments.Where(c => c.ParentCommentId != null).ElementAt(1).Id, CreatedAt = DateTime.UtcNow.AddDays(-1).AddHours(1) }, // Sarah likes Mike's security reply
                 new Like { UserId = users[6].Id, CommentId = comments.Where(c => c.ParentCommentId != null).ElementAt(3).Id, CreatedAt = DateTime.UtcNow.AddHours(-7) }, // Lucas likes Alex's Kubernetes reply

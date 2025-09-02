@@ -15,9 +15,14 @@ namespace CleanSharpArchitecture.API.Extensions
             services.AddScoped<IBlobService, BlobService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserPhotoService, UserPhotoService>();
             services.AddScoped<ILikeService, LikeService>();
             services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IFollowerService, FollowerService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<ICommentService, CommentService>();
             services.AddSignalR();
 
             services.AddAutoMapper(typeof(SourceMapping));

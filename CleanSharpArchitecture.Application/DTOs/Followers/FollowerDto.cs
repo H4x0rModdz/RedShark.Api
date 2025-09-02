@@ -2,10 +2,20 @@
 {
     public class FollowerDto
     {
-        public long Id { get; set; }
-        public long UserId { get; set; }
+        public long RelationshipId { get; set; }
+
+        public long ProfileUserId { get; set; }
+
         public long FollowerId { get; set; }
-        public string UserName { get; set; }
-        public string FollowerName { get; set; }
+
+        public string FollowerDisplayName { get; set; } = string.Empty;
+
+        public string FollowerUsername { get; set; } = string.Empty;
+
+        public string? FollowerProfileImage { get; set; }
+
+        public bool DoIFollowThisPerson { get; set; }
+
+        public bool DoesThisPersonFollowMe { get; set; }
     }
 }

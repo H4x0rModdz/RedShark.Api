@@ -10,20 +10,20 @@ namespace CleanSharpArchitecture.Application.DTOs.Posts.Request
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        // Informações do usuário que criou o post
+        // Information about the user who created the post
         public long UserId { get; set; }
         public string Name { get; set; }
         public string UserName { get; set; }
         public string UserImage { get; set; }
 
-        // Estatísticas do post
+        // Post statistics
         public int CommentsCount { get; set; }
         public int LikesCount { get; set; }
 
-        // Imagens associadas ao post
+        // Images associated with the post
         public IEnumerable<PostImageDto>? Images { get; set; } = new List<PostImageDto>();
 
-        // Lista de comentários do post
+        // List of post comments
         public IEnumerable<CommentDto>? Comments { get; set; } = new List<CommentDto>();
     }
 }

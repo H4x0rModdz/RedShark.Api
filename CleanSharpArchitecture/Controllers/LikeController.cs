@@ -20,51 +20,59 @@ namespace CleanSharpArchitecture.Controllers
             _likeService = likeService;
         }
 
-        /// <summary>
-        /// Cria um novo like.
-        /// </summary>
-        /// <param name="createLikeDto">DTO contendo o UserId e o PostId.</param>
-        /// <returns>Retorna o resultado da operação de criação.</returns>
         [HttpPost]
         public async Task<LikeResultDto> CreateLike([FromBody] CreateLikeDto createLikeDto)
         {
             return await _likeService.CreateLike(createLikeDto);
         }
 
-        /// <summary>
-        /// Exclui um like pelo seu ID.
-        /// </summary>
-        /// <param name="id">ID do like a ser excluído.</param>
-        /// <returns>Retorna o resultado da operação de exclusão.</returns>
         [HttpDelete("{id}")]
         public async Task<LikeResultDto> DeleteLike(long id)
         {
             return await _likeService.DeleteLike(id);
         }
 
-        /// <summary>
-        /// Recupera um like pelo seu ID.
-        /// </summary>
-        /// <param name="id">ID do like.</param>
-        /// <returns>id os dados do like ou null se não encontrado.</returns>
         [HttpGet("{id}")]
         public async Task<LikeDto?> GetLikeById(long id)
         {
             return await _likeService.GetLikeById(id);
         }
 
-        /// <summary>
-        /// Recupera todos os likes paginados, aplicando filtros opcionais por PostId e EntityStatus.
-        /// </summary>
-        /// <param name="postId">Opcional: se fornecido, retorna apenas os likes do post especificado.</param>
-        /// <param name="status">Opcional: se fornecido, retorna apenas os likes com o status especificado.</param>
-        /// <param name="pageNumber">Número da página (padrão 1).</param>
-        /// <param name="pageSize">Quantidade de likes por página (padrão 10).</param>
-        /// <returns>Retorna uma coleção de <see cref="LikeDto"/>.</returns>
         [HttpGet]
         public async Task<IEnumerable<LikeDto>> GetAllLikes([FromQuery] long? postId, [FromQuery] EntityStatus? status, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             return await _likeService.GetAllLikes(postId, status, pageNumber, pageSize);
+        }
+
+        [HttpGet("user/{userId}/post/{postId}")]
+        public async Task<LikeDto?> GetLikeByUserAndPost(long userId, long postId)
+        {
+            return await _likeService.GetLikeByUserAndPost(userId, postId);
+        }
+
+        [HttpPost("toggle")]
+        public async Task<LikeResultDto> ToggleLike([FromBody] CreateLikeDto toggleLikeDto)
+        {
+            // Log the incoming request with detailed information
+            Console.WriteLine($"ToggleLike request - UserId: {toggleLikeDto.UserId}, PostId: {toggleLikeDto.PostId}, CommentId: {toggleLikeDto.CommentId}");
+            Console.WriteLine($"UserId type: {toggleLikeDto.UserId.GetType()}, Value as string: '{toggleLikeDto.UserId}'");
+            
+            if (toggleLikeDto.PostId.HasValue)
+            {
+                return await _likeService.ToggleLike(toggleLikeDto.UserId, toggleLikeDto.PostId.Value);
+            }
+            else if (toggleLikeDto.CommentId.HasValue)
+            {
+                return await _likeService.ToggleCommentLike(toggleLikeDto.UserId, toggleLikeDto.CommentId.Value);
+            }
+            else
+            {
+                return new LikeResultDto
+                {
+                    Success = false,
+                    Errors = new List<string> { "PostId ou CommentId deve ser fornecido." }
+                };
+            }
         }
     }
 }

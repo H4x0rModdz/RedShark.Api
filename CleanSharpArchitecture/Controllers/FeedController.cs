@@ -16,13 +16,6 @@ namespace CleanSharpArchitecture.Controllers
 
         public FeedController(IFeedService feedService) => _feedService = feedService;
 
-        /// <summary>
-        /// Recupera o feed do usuário autenticado, aplicando filtros e paginação.
-        /// </summary>
-        /// <param name="feedRequestDto">
-        /// DTO contendo os parâmetros de filtragem (como cursor ou data de referência) e paginação.
-        /// </param>
-        /// <returns>Retorna os posts ordenados conforme a lógica de feed.</returns>
         [HttpGet] // GET: api/Feed
         public async Task<FeedResponseDto> GetFeed([FromQuery] FeedRequestDto feedRequestDto)
         {

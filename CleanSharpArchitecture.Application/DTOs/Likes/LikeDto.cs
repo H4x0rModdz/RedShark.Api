@@ -3,19 +3,19 @@
     public class LikeDto
     {
         /// <summary>
-        /// ID do like.
+        /// ID of the like.
         /// </summary>
         public long Id { get; set; }
         /// <summary>
-        /// ID do usuário que deu o like.
+        /// ID of the user who gave the like.
         /// </summary>
         public long UserId { get; set; }
         /// <summary>
-        /// Nome do usuário que deu o like.
+        /// Name of the user who gave the like.
         /// </summary>
         public string UserName { get; set; }
         /// <summary>
-        /// ID do post curtido.
+        /// ID of the liked post.
         /// </summary>
         public long PostId { get; set; }
     }

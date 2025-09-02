@@ -28,6 +28,15 @@
             {
                 return await _context.Posts
                     .Include(p => p.Images)
+                    .Include(p => p.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Likes)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Replies)
+                            .ThenInclude(r => r.User)
+                    .Include(p => p.Likes)
                     .FirstOrDefaultAsync(p => p.Id == id);
             }
 
@@ -35,6 +44,15 @@
             {
                 var query = _context.Posts
                     .Include(p => p.Images)
+                    .Include(p => p.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Likes)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Replies)
+                            .ThenInclude(r => r.User)
+                    .Include(p => p.Likes)
                     .AsQueryable();
 
                 query = query.Skip((pageNumber - 1) * pageSize)
@@ -45,7 +63,7 @@
 
             public async Task Update(Post post)
             {
-                // Se a entidade já estiver sendo rastreada, apenas marca como modificada
+                // Handle entity tracking to avoid conflicts in complex update scenarios
                 var entry = _context.Entry(post);
                 if (entry.State == EntityState.Detached)
                 {
@@ -89,29 +107,58 @@
 
             public async Task<IEnumerable<Post>> GetPostsForFeed(IEnumerable<long> followedUserIds, string? cursor, int pageSize)
             {
-                // Inicia a query sem filtrar por UserId
                 var query = _context.Posts
                     .Include(p => p.Images)
                     .Include(p => p.User)
+                    .Include(p => p.Likes)
                     .Include(p => p.Comments)
                         .ThenInclude(c => c.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Likes)
                     .Include(p => p.Comments)
                         .ThenInclude(c => c.Replies)
                     .AsQueryable();
 
-                // Se um cursor for fornecido, convertemos para long e pegamos só posts com Id menor que o cursor.
+                // Cursor-based pagination for better performance with large datasets
                 if (!string.IsNullOrEmpty(cursor))
                 {
                     long cursorId = long.Parse(cursor);
                     query = query.Where(p => p.Id < cursorId);
                 }
 
-                // Ordena priorizando posts de usuários seguidos e depois por Id (desc).
+                // Prioritize followed users posts while maintaining chronological order
                 query = query.OrderByDescending(p => followedUserIds.Contains(p.UserId) ? 1 : 0)
                              .ThenByDescending(p => p.Id)
                              .Take(pageSize);
 
                 return await query.ToListAsync();
+            }
+
+            public async Task<IEnumerable<Post>> GetPostsByUserId(long userId, int pageNumber, int pageSize)
+            {
+                return await _context.Posts
+                    .Include(p => p.Images)
+                    .Include(p => p.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Likes)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Replies)
+                            .ThenInclude(r => r.User)
+                    .Include(p => p.Likes)
+                    .Where(p => p.UserId == userId)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
+
+            public async Task<int> GetPostsCountByUserId(long userId)
+            {
+                return await _context.Posts
+                    .Where(p => p.UserId == userId)
+                    .CountAsync();
             }
         }
     }

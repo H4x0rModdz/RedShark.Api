@@ -134,7 +134,7 @@ namespace CleanSharpArchitecture.Infrastructure.Data.Seeders
             context.Comments.AddRange(comments);
             await context.SaveChangesAsync();
 
-            // Agora adicionar replies (comentários aninhados) usando os IDs reais dos comentários já salvos
+            // Now add replies (nested comments) using the real IDs of the already saved comments
             var replies = new List<Comment>
             {
                 // Reply to Jane's welcome comment (comments[0])

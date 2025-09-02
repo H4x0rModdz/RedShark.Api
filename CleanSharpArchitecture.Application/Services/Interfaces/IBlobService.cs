@@ -5,10 +5,10 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
     public interface IBlobService
     {
         /// <summary>
-        /// Faz o upload de um arquivo para o serviço de armazenamento de blobs.
+        /// Uploads a file to the blob storage service.
         /// </summary>
-        /// <param name="file">O arquivo a ser enviado.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona, contendo a URL do arquivo enviado.</returns>
+        /// <param name="file">The file to be uploaded.</param>
+        /// <returns>A task representing the asynchronous operation, containing the URL of the uploaded file.</returns>
         Task<string> UploadFileAsync(IFormFile file, string containerName);
     }
 }

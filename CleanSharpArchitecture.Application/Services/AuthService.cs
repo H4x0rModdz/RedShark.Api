@@ -1,8 +1,9 @@
 ﻿using CleanSharpArchitecture.Application.Services.Interfaces;
 using CleanSharpArchitecture.Application.DTOs.Auth.Request;
 using CleanSharpArchitecture.Application.DTOs.Auth.Response;
-using CleanSharpArchitecture.Application.Repositories.Interfaces;
+using CleanSharpArchitecture.Domain.Interfaces;
 using CleanSharpArchitecture.Domain.Entities;
+using CleanSharpArchitecture.Domain.ValueObjects;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using System.Text.RegularExpressions;
@@ -282,9 +283,9 @@ namespace CleanSharpArchitecture.Infrastructure.Services
         {
             var newUser = new User
             {
-                UserName = registerDto.UserName?.Trim(),
+                UserName = Username.Create(registerDto.UserName?.Trim()),
                 Name = registerDto.Name?.Trim(),
-                Email = registerDto.Email?.ToLowerInvariant().Trim(),
+                Email = Email.Create(registerDto.Email?.ToLowerInvariant().Trim()),
                 Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 ProfileImageUrl = imageUrl ?? "https://github.com/shadcn.png",
                 Biography = string.IsNullOrWhiteSpace(registerDto.Biography) 

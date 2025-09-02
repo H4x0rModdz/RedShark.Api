@@ -2,7 +2,6 @@
 using CleanSharpArchitecture.Application.DTOs.Notifications;
 using CleanSharpArchitecture.Application.DTOs.Notifications.Requests;
 using CleanSharpArchitecture.Application.Hubs;
-using CleanSharpArchitecture.Application.Repositories.Interfaces;
 using CleanSharpArchitecture.Application.Services.Interfaces;
 using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Interfaces;

@@ -1,5 +1,6 @@
 using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Snowflakes;
+using CleanSharpArchitecture.Domain.ValueObjects;
 using FluentAssertions;
 using System.Collections.Concurrent;
 using Xunit;
@@ -23,7 +24,7 @@ namespace CleanSharpArchitecture.Testing.UnitTests
 
             // Assert
             var uniqueIds = ids.Distinct().Count();
-            uniqueIds.Should().Be(1000, "todos os IDs devem ser únicos");
+            uniqueIds.Should().Be(1000, "all IDs should be unique");
         }
 
         [Fact]
@@ -42,7 +43,7 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             // Assert
             var idList = ids.ToList();
             var uniqueIds = idList.Distinct().Count();
-            uniqueIds.Should().Be(1000, "todos os IDs devem ser únicos mesmo em execução paralela");
+            uniqueIds.Should().Be(1000, "all IDs should be unique even in parallel execution");
         }
 
         [Fact]
@@ -54,9 +55,9 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             {
                 users.Add(new User
                 {
-                    UserName = $"user{i}",
+                    UserName = Username.Create($"user{i}"),
                     Name = $"User {i}",
-                    Email = $"user{i}@test.com",
+                    Email = Email.Create($"user{i}@test.com"),
                     Password = "test123",
                     ProfileImageUrl = "https://example.com/image.jpg",
                     Biography = "Test user"
@@ -66,11 +67,11 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             // Assert
             var ids = users.Select(u => u.Id).ToList();
             var uniqueIds = ids.Distinct().Count();
-            uniqueIds.Should().Be(100, "cada usuário deve ter um ID único");
+            uniqueIds.Should().Be(100, "each user should have a unique ID");
 
-            // Verificar se não há duplicatas
+            // Check if there are no duplicates
             var duplicates = ids.GroupBy(id => id).Where(g => g.Count() > 1).ToList();
-            duplicates.Should().BeEmpty("não deve haver IDs duplicados");
+            duplicates.Should().BeEmpty("there should be no duplicate IDs");
         }
 
         [Fact]
@@ -83,9 +84,9 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             {
                 users.Add(new User
                 {
-                    UserName = $"user{i}",
+                    UserName = Username.Create($"user{i}"),
                     Name = $"User {i}",
-                    Email = $"user{i}@test.com",
+                    Email = Email.Create($"user{i}@test.com"),
                     Password = "test123",
                     ProfileImageUrl = "https://example.com/image.jpg",
                     Biography = "Test user"
@@ -96,11 +97,11 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             var userList = users.ToList();
             var ids = userList.Select(u => u.Id).ToList();
             var uniqueIds = ids.Distinct().Count();
-            uniqueIds.Should().Be(100, "cada usuário deve ter um ID único mesmo criado em paralelo");
+            uniqueIds.Should().Be(100, "each user should have a unique ID even when created in parallel");
 
-            // Verificar se não há duplicatas
+            // Check if there are no duplicates
             var duplicates = ids.GroupBy(id => id).Where(g => g.Count() > 1).ToList();
-            duplicates.Should().BeEmpty("não deve haver IDs duplicados em criação paralela");
+            duplicates.Should().BeEmpty("there should be no duplicate IDs in parallel creation");
         }
 
         [Fact]
@@ -114,29 +115,29 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             {
                 users.Add(new User
                 {
-                    UserName = $"user{i}",
+                    UserName = Username.Create($"user{i}"),
                     Name = $"User {i}",
-                    Email = $"user{i}@test.com",
+                    Email = Email.Create($"user{i}@test.com"),
                     Password = "test123",
                     ProfileImageUrl = "https://example.com/image.jpg",
                     Biography = "Test user"
                 });
                 
-                // Pequeno delay para garantir timestamps diferentes
+                // Small delay to ensure different timestamps
                 Thread.Sleep(1);
             }
 
             // Assert
             foreach (var user in users)
             {
-                user.Id.Should().BeGreaterThan(0, "IDs devem ser positivos");
+                user.Id.Should().BeGreaterThan(0, "IDs should be positive");
             }
 
-            // IDs devem estar em ordem crescente (já que foram criados sequencialmente)
+            // IDs should be in ascending order (since they were created sequentially)
             var ids = users.Select(u => u.Id).ToList();
             for (int i = 1; i < ids.Count; i++)
             {
-                ids[i].Should().BeGreaterThan(ids[i - 1], "IDs criados posteriormente devem ser maiores");
+                ids[i].Should().BeGreaterThan(ids[i - 1], "IDs created later should be greater");
             }
         }
 
@@ -146,14 +147,14 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             // Arrange
             var users = new List<User>();
 
-            // Act - Simula criação massiva como no frontend (5000 entidades muito rápido)
+            // Act - Simulate massive creation as in frontend (5000 entities very quickly)
             for (int i = 0; i < 5000; i++)
             {
                 users.Add(new User
                 {
-                    UserName = $"user{i}",
+                    UserName = Username.Create($"user{i}"),
                     Name = $"User {i}",
-                    Email = $"user{i}@test.com",
+                    Email = Email.Create($"user{i}@test.com"),
                     Password = "test123",
                     ProfileImageUrl = "https://example.com/image.jpg",
                     Biography = "Test user"
@@ -164,9 +165,9 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             var ids = users.Select(u => u.Id).ToList();
             var uniqueIds = ids.Distinct().Count();
             
-            uniqueIds.Should().Be(5000, "todos os 5000 IDs devem ser únicos");
+            uniqueIds.Should().Be(5000, "all 5000 IDs should be unique");
 
-            // Verificar duplicatas específicas
+            // Check specific duplicates
             var duplicates = ids.GroupBy(id => id)
                                 .Where(g => g.Count() > 1)
                                 .Select(g => new { Id = g.Key, Count = g.Count() })
@@ -175,7 +176,7 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             if (duplicates.Any())
             {
                 var duplicateInfo = string.Join(", ", duplicates.Take(5).Select(d => $"ID {d.Id}: {d.Count}x"));
-                Assert.True(false, $"Encontradas {duplicates.Count} duplicatas: {duplicateInfo}");
+                Assert.True(false, $"Found {duplicates.Count} duplicates: {duplicateInfo}");
             }
         }
 
@@ -186,22 +187,22 @@ namespace CleanSharpArchitecture.Testing.UnitTests
             var generator = new SnowflakeIdGenerator(1, 1);
             var ids = new HashSet<long>();
 
-            // Act - Força overflow da sequência (4096 IDs no mesmo milissegundo)
+            // Act - Force sequence overflow (4096 IDs in the same millisecond)
             var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             
             for (int i = 0; i < 5000; i++)
             {
                 var id = generator.NextId();
                 
-                // Assert - Verifica unicidade
+                // Assert - Check uniqueness
                 if (!ids.Add(id))
                 {
-                    Assert.True(false, $"ID duplicado encontrado: {id} na iteração {i}");
+                    Assert.True(false, $"Duplicate ID found: {id} at iteration {i}");
                 }
             }
 
             // Assert
-            ids.Count.Should().Be(5000, "todos os IDs devem ser únicos mesmo com overflow");
+            ids.Count.Should().Be(5000, "all IDs should be unique even with overflow");
         }
     }
 }
