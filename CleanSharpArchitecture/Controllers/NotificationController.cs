@@ -21,10 +21,13 @@ namespace CleanSharpArchitecture.Controllers
             return await _notificationService.CreateNotification(notificationDto);
         }
 
-        [HttpPatch] // PATCH: api/Notification
-        public async Task<NotificationDto> UpdateNotification(UpdateNotificationDto notificationDto)
+        [HttpPatch("{id:long}")]
+        public async Task<IActionResult> Patch(long id, [FromBody] UpdateNotificationDto dto)
         {
-            return await _notificationService.UpdateNotification(notificationDto);
+            if (id != dto.Id) return BadRequest("Route id and body id mismatch.");
+
+            await _notificationService.UpdateNotification(dto);
+            return NoContent();
         }
 
         [HttpGet] // GET: api/Notification

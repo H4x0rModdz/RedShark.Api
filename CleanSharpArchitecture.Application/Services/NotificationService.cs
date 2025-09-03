@@ -6,6 +6,7 @@ using CleanSharpArchitecture.Application.Services.Interfaces;
 using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace CleanSharpArchitecture.Application.Services
 {
@@ -15,17 +16,20 @@ namespace CleanSharpArchitecture.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(
             INotificationRepository repository,
             IUserRepository userRepository,
             IHubContext<NotificationHub> hubContext,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<NotificationService> logger)
         {
             _repository = repository;
             _userRepository = userRepository;
             _hubContext = hubContext;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<NotificationDto> CreateNotification(CreateNotificationDto dto)
@@ -43,25 +47,46 @@ namespace CleanSharpArchitecture.Application.Services
 
             var result = _mapper.Map<NotificationDto>(createdNotification);
 
-            await _hubContext.Clients.Group(dto.UserId.ToString()).SendAsync("ReceiveNotification", result.Content); // Send to specific client
-
-            //await _hubContext.Clients.All.SendAsync("ReceiveNotification", "enviando para todos: " + result.Content); // Send to all clients
+            _logger.LogInformation("🚀 Sending SignalR notification to user_{UserId}: {Content}", dto.UserId, result.Content);
+            
+            try 
+            {
+                await _hubContext.Clients.Group($"user_{dto.UserId}").SendAsync("ReceiveNotification", result.Content);
+                _logger.LogInformation("✅ Group notification sent successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Failed to send SignalR notification");
+            }
 
             return result;
         }
 
         public async Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto)
         {
-            var notification = await _repository.GetNotificationByIdAsync(dto.Id) ?? throw new Exception("Notification not found.");
+            // TODO: verificar se essa notificação é do user q tá requisitando
+            // TODO: só deixar ele mudar o content se o createdby da notificação for o id dele
+            var n = await _repository.GetNotificationByIdAsync(dto.Id)
+                     ?? throw new KeyNotFoundException("Notification not found.");
 
-            var updatedNotification = await _repository.UpdateNotificationAsync(notification);
+            if (dto.IsRead.HasValue) 
+                n.IsRead = dto.IsRead.Value;
 
-            var result = _mapper.Map<NotificationDto>(updatedNotification);
+            if (dto.Content != null) 
+                n.Content = dto.Content;
 
-            await _hubContext.Clients.Group(notification.UserId.ToString()).SendAsync("ReceiveNotificationUpdate", result.Content);
+            n.UpdatedAt = DateTime.UtcNow;
+
+            await _repository.UpdateNotificationAsync(n);
+
+            var result = _mapper.Map<NotificationDto>(n);
+
+            await _hubContext.Clients.Group($"user_{n.UserId}")
+                .SendAsync("ReceiveNotificationUpdate", result);
 
             return result;
         }
+
 
         public async Task<IEnumerable<NotificationDto>> GetAllNotifications(int pageNumber, int pageSize)
         {

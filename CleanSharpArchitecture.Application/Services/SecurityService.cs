@@ -1,4 +1,5 @@
 using CleanSharpArchitecture.Application.Services.Interfaces;
+using CleanSharpArchitecture.Domain.Entities;
 using CleanSharpArchitecture.Domain.Entities.Posts;
 using CleanSharpArchitecture.Domain.Interfaces;
 using Serilog;
@@ -133,6 +134,38 @@ namespace CleanSharpArchitecture.Application.Services
                 Log.Error(ex, "Error checking if user {UserId} is valid", userId);
                 return false;
             }
+        }
+
+        //public async Task<bool> IsFollowingAsync(long followerId, long followedId)
+        //{
+        //    if (!await IsValidUserAsync(followerId) || !await IsValidUserAsync(followedId))
+        //    {
+        //        Log.Warning("Invalid user in follow check. Follower: {FollowerId}, Followed: {FollowedId}", 
+        //            followerId, followedId);
+        //        return false;
+        //    }
+        //    return await _followerRepository.IsFollowingAsync(followerId, followedId);
+        //}
+
+        public async Task<bool> CanModifyNotification(long userId, Notification notification)
+        {
+            if (notification == null)
+            {
+                Log.Warning("Attempt to check permissions on null notification by user {UserId}", userId);
+                return false;
+            }
+            if (!await IsValidUserAsync(userId))
+            {
+                Log.Warning("Invalid user {UserId} attempting to modify notification {NotificationId}", userId, notification.Id);
+                return false;
+            }
+            var isOwner = notification.UserId == userId;
+            if (!isOwner)
+            {
+                Log.Warning("User {UserId} attempted to modify notification {NotificationId} owned by {NotificationOwnerId}",
+                    userId, notification.Id, notification.UserId);
+            }
+            return isOwner;
         }
 
         public void ThrowAccessDenied(string action, string resource)
