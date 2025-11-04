@@ -13,6 +13,7 @@ namespace CleanSharpArchitecture.Application.DTOs.Users.Requests
         public string? Biography { get; set; }
         public string? Location { get; set; }
         public string? Website { get; set; }
+        public string? MaritalStatus { get; set; }
         public IFormFile? ProfileImage { get; set; }
         public IFormFile? CoverImage { get; set; }
         public EntityStatus? Status { get; set; }
