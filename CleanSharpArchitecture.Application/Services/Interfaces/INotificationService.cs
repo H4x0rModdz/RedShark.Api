@@ -7,7 +7,7 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
     public interface INotificationService
     {
         Task<NotificationDto> CreateNotification(CreateNotificationDto dto);
-        Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto);
+        Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto, long currentUserId);
         Task<IEnumerable<NotificationDto>> GetAllNotifications(int pageNumber, int pageSize);
         Task<NotificationDto> GetNotificationById(long id);
     }

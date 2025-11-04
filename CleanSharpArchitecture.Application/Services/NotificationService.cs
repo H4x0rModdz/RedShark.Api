@@ -62,16 +62,24 @@ namespace CleanSharpArchitecture.Application.Services
             return result;
         }
 
-        public async Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto)
+        public async Task<NotificationDto> UpdateNotification(UpdateNotificationDto dto, long currentUserId)
         {
-            // TODO: verificar se essa notificação é do user q tá requisitando
-            // TODO: só deixar ele mudar o content se o createdby da notificação for o id dele
             var n = await _repository.GetNotificationByIdAsync(dto.Id)
                      ?? throw new KeyNotFoundException("Notification not found.");
 
+            // Validação de ownership: usuário só pode modificar suas próprias notificações
+            if (n.UserId != currentUserId)
+            {
+                _logger.LogWarning("User {CurrentUserId} attempted to modify notification {NotificationId} owned by {OwnerId}", 
+                    currentUserId, dto.Id, n.UserId);
+                throw new UnauthorizedAccessException("Access denied: Cannot modify another user's notification.");
+            }
+
+            // Usuário pode sempre alterar IsRead
             if (dto.IsRead.HasValue) 
                 n.IsRead = dto.IsRead.Value;
 
+            // Para alterar Content, precisa ter sido criado por ele (same check já feito acima)
             if (dto.Content != null) 
                 n.Content = dto.Content;
 

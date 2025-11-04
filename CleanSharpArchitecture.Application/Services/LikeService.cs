@@ -49,12 +49,34 @@ namespace CleanSharpArchitecture.Application.Services
             }
         }
 
-        public async Task<LikeResultDto> DeleteLike(long id)
+        public async Task<LikeResultDto> DeleteLike(long id, long currentUserId)
         {
             try
             {
+                var like = await _likeRepository.GetById(id);
+                if (like == null)
+                {
+                    return new LikeResultDto
+                    {
+                        Success = false,
+                        Errors = new List<string> { "Like not found." }
+                    };
+                }
+
+                // Validação de ownership: usuário só pode deletar seus próprios likes
+                if (like.UserId != currentUserId)
+                {
+                    Log.Warning("User {CurrentUserId} attempted to delete like {LikeId} owned by {OwnerId}", 
+                        currentUserId, id, like.UserId);
+                    return new LikeResultDto
+                    {
+                        Success = false,
+                        Errors = new List<string> { "Access denied: Cannot delete another user's like." }
+                    };
+                }
+
                 await _likeRepository.Delete(id);
-                Log.Information($"Like {id} deleted successfully.");
+                Log.Information($"Like {id} deleted successfully by user {currentUserId}.");
                 return new LikeResultDto
                 {
                     Success = true,

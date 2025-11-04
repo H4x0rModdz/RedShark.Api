@@ -9,7 +9,7 @@ namespace CleanSharpArchitecture.Application.Services.Interfaces
     {
         Task<LikeResultDto> CreateLike(CreateLikeDto createLikeDto);
 
-        Task<LikeResultDto> DeleteLike(long id);
+        Task<LikeResultDto> DeleteLike(long id, long currentUserId);
 
         Task<LikeDto?> GetLikeById(long id);
 

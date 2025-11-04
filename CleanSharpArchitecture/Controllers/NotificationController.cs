@@ -1,6 +1,7 @@
 ﻿using CleanSharpArchitecture.Application.DTOs.Notifications;
 using CleanSharpArchitecture.Application.DTOs.Notifications.Requests;
 using CleanSharpArchitecture.Application.Services.Interfaces;
+using CleanSharpArchitecture.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +27,8 @@ namespace CleanSharpArchitecture.Controllers
         {
             if (id != dto.Id) return BadRequest("Route id and body id mismatch.");
 
-            await _notificationService.UpdateNotification(dto);
+            var currentUserId = this.GetCurrentUserId();
+            await _notificationService.UpdateNotification(dto, currentUserId);
             return NoContent();
         }
 

@@ -64,6 +64,18 @@ namespace CleanSharpArchitecture.Application.Services
             try
             {
                 var user = await FindUser(updateUserDto.Id);
+                
+                // Validação de ownership: usuário só pode modificar a si mesmo
+                if (user.Id != currentUserId)
+                {
+                    Log.Warning("User {CurrentUserId} attempted to modify user {TargetUserId}", currentUserId, user.Id);
+                    return new UpdateUserResultDto 
+                    { 
+                        Success = false, 
+                        Errors = new List<string> { "Access denied: Cannot modify another user's profile." } 
+                    };
+                }
+                
                 UpdateUserFields(user, updateUserDto);
 
                 if (updateUserDto.ProfileImage is not null)
@@ -96,6 +108,18 @@ namespace CleanSharpArchitecture.Application.Services
             try
             {
                 var user = await FindUser(id);
+                
+                // Validação de ownership: usuário só pode deletar a si mesmo
+                if (user.Id != currentUserId)
+                {
+                    Log.Warning("User {CurrentUserId} attempted to delete user {TargetUserId}", currentUserId, user.Id);
+                    return new DeleteUserResultDto 
+                    { 
+                        Success = false, 
+                        Errors = new List<string> { "Access denied: Cannot delete another user's account." } 
+                    };
+                }
+                
                 user.Status = EntityStatus.Deleted;
                 user.UpdatedAt = DateTime.UtcNow;
 
@@ -122,6 +146,8 @@ namespace CleanSharpArchitecture.Application.Services
 
         private void UpdateUserFields(User user, UpdateUserDto updateUserDto)
         {
+            if (!string.IsNullOrWhiteSpace(updateUserDto.UserName))
+                user.UserName = Username.Create(updateUserDto.UserName);
             if (!string.IsNullOrWhiteSpace(updateUserDto.Name))
                 user.Name = updateUserDto.Name;
             if (!string.IsNullOrWhiteSpace(updateUserDto.Email))
@@ -132,6 +158,13 @@ namespace CleanSharpArchitecture.Application.Services
                 user.Location = updateUserDto.Location;
             if (!string.IsNullOrWhiteSpace(updateUserDto.Website))
                 user.Website = updateUserDto.Website;
+            if (!string.IsNullOrWhiteSpace(updateUserDto.MaritalStatus))
+            {
+                if (Enum.TryParse<Domain.Enums.MaritalStatus>(updateUserDto.MaritalStatus, true, out var maritalStatus))
+                {
+                    user.MaritalStatus = maritalStatus;
+                }
+            }
             if (!string.IsNullOrWhiteSpace(updateUserDto.Password))
                 user.Password = updateUserDto.Password;
             if (updateUserDto.Status is not null)
